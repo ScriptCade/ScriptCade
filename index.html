@@ -5,328 +5,373 @@
      crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScriptCade</title>
+    <title>ScriptCade - The Ultimate Grind</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=VT323&display=swap');
 
+        /* === 1. GLOBAL BASE VARIABLES & DEFAULT ANIMATION === */
         :root {
-            --bg-base: #050505;
-            --bg-surface: rgba(20, 20, 25, 0.7);
+            --bg-main: radial-gradient(circle at 15% 30%, rgba(0, 240, 255, 0.15) 0%, transparent 50%), radial-gradient(circle at 85% 70%, rgba(255, 0, 85, 0.15) 0%, transparent 50%), #030307;
+            --bg-surface: rgba(12, 12, 20, 0.8);
+            --text-main: #ffffff;
             --accent-primary: #00f0ff;
             --accent-secondary: #ff0055;
-            --text-main: #ffffff;
-            --text-muted: #8892b0;
+            --font-main: 'Outfit', system-ui, sans-serif;
+            --radius-card: 16px;
+            --radius-btn: 10px;
+            --border-card: 2px solid rgba(255,255,255,0.06);
+            --shadow-card: 0 20px 45px rgba(0,0,0,0.5);
+            --cursor-style: crosshair;
         }
 
         body {
-            background: var(--bg-base);
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 85% 30%, rgba(255, 0, 85, 0.08) 0%, transparent 50%);
-            color: var(--text-main);
-            font-family: 'Outfit', system-ui, sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: var(--bg-main); color: var(--text-main);
+            font-family: var(--font-main); margin: 0; min-height: 100vh;
+            overflow-x: hidden; cursor: var(--cursor-style);
+            background-size: 200% 200%;
+            animation: defaultPulse 15s ease infinite alternate;
         }
 
-        /* LANDING MENU */
-        #landing-screen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-base);
-            z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        #landing-screen::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+') repeat;
-            opacity: 0.5; z-index: -1; pointer-events: none;
-        }
-        .landing-content {
-            text-align: center;
-            opacity: 0; transform: translateY(40px);
-            animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-        }
-        .logo-placeholder {
-            width: 350px; height: auto; max-width: 80vw; margin-bottom: 40px;
-            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.3));
-            object-fit: contain;
-        }
-        .enter-btn {
-            padding: 18px 50px; font-size: 1.2rem; font-weight: 800; letter-spacing: 2px;
-            color: var(--bg-base); background: var(--accent-primary);
-            border: none; border-radius: 50px; cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4), inset 0 0 10px rgba(255,255,255,0.5);
-            transition: all 0.3s ease; text-transform: uppercase; position: relative; overflow: hidden;
-        }
-        .enter-btn:hover {
-            transform: scale(1.05) translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 240, 255, 0.6), inset 0 0 15px rgba(255,255,255,0.8);
-            background: #fff; color: #000;
-        }
+        @keyframes defaultPulse { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-        /* ARCADE CONTAINER */
-        #arcade-container {
-            padding: 40px 20px; max-width: 1300px; margin: 0 auto;
-            display: none; opacity: 0;
-            transition: opacity 1s ease;
-        }
-        .app-title {
-            text-align: center; font-size: 3.5rem; font-weight: 900; letter-spacing: 4px;
-            margin-bottom: 60px; text-transform: uppercase;
-            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 15px rgba(0,240,255,0.2));
-            animation: pulseGlow 3s infinite alternate;
-        }
+        /* AMBIENT CRT SCANLINES */
+        #ambient-scanlines { position: fixed; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%); z-index: 99999; background-size: 100% 4px; pointer-events: none; }
+        body.in-game #ambient-scanlines { display: none; }
 
-        /* GRID & SLOTS */
-        .section-title {
-            font-size: 1.8rem; font-weight: 700; margin-bottom: 30px;
-            display: flex; align-items: center; gap: 15px;
+        /* ==========================================
+           2. BASE THEMES WITH ANIMATIONS
+           ========================================== */
+           
+        /* HACKER: Scrolling terminal effect */
+        body.theme-hacker {
+            --bg-main: repeating-linear-gradient(0deg, #020a02 0px, #020a02 2px, #000 2px, #000 4px);
+            --bg-surface: #000000; --text-main: #00ff00; --accent-primary: #00ff00; --accent-secondary: #008800;
+            --font-main: 'VT323', monospace; --radius-card: 0px; --radius-btn: 0px;
+            --border-card: 1px solid #00ff00; --shadow-card: 0 0 10px rgba(0,255,0,0.1); --cursor-style: text;
+            animation: hackerScroll 10s linear infinite;
         }
-        .section-title::after {
-            content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
-        }
-        .game-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; margin-bottom: 70px;
-        }
-        .slot {
-            background: var(--bg-surface); border-radius: 20px; overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            opacity: 0; transform: translateY(30px);
-        }
-        .slot:hover {
-            transform: translateY(-10px) scale(1.02);
-            border-color: rgba(0, 240, 255, 0.4);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(0, 240, 255, 0.15);
-        }
+        @keyframes hackerScroll { from { background-position: 0 0; } to { background-position: 0 100vh; } }
 
-        /* ================= CRAZY HOT CARD OVERDRIVE ================= */
-        .slot.slot-hot {
-            border: 2px solid #ff0055;
-            background: linear-gradient(145deg, rgba(255, 0, 85, 0.1), var(--bg-surface));
-            animation: crazyHotGlow 1.5s infinite alternate ease-in-out;
+        /* RETRO: Pulsing outrun neon */
+        body.theme-retro {
+            --bg-main: linear-gradient(180deg, #1a0b2e 0%, #4a154b 60%, #ff8800 100%);
+            --bg-surface: rgba(20, 10, 40, 0.9); --text-main: #ffeeff; --accent-primary: #f700ff; --accent-secondary: #00e5ff;
+            --font-main: 'Outfit', sans-serif; --radius-card: 8px; --radius-btn: 20px;
+            --border-card: 2px solid #f700ff; --shadow-card: 0 10px 25px rgba(247,0,255,0.2);
+            animation: none;
         }
-        .slot.slot-hot:hover {
-            animation: ultraShake 0.15s infinite; /* Aggressive Jitter Shake */
-            box-shadow: 0 0 40px #ff0055, 0 0 80px rgba(255, 0, 85, 0.6), inset 0 0 30px rgba(255, 0, 85, 0.5);
-            border-color: #fff;
-        }
-        .slot.slot-hot .game-title {
-            animation: rgbSplit 0.4s infinite; /* Chromatic Aberration Text */
-            font-weight: 900;
-        }
+        body.theme-retro .app-title { animation: retroGlow 2s ease-in-out infinite alternate; }
+        @keyframes retroGlow { from { text-shadow: 0 0 10px #f700ff, 0 0 20px #f700ff; } to { text-shadow: 0 0 20px #00e5ff, 0 0 30px #00e5ff; } }
 
-        /* ================= CRAZY NEW CARD OVERDRIVE ================= */
-        .slot.slot-new {
-            border: 2px solid #00f0ff;
-            background: linear-gradient(145deg, rgba(0, 240, 255, 0.1), var(--bg-surface));
-            animation: crazyNewGlow 1.5s infinite alternate ease-in-out;
+        /* VAPORWAVE: Floaty OS windows */
+        body.theme-vapor {
+            --bg-main: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --bg-surface: #c0c0c0; --text-main: #000000; --accent-primary: #000080; --accent-secondary: #008080;
+            --font-main: 'Tahoma', sans-serif; --radius-card: 0px; --radius-btn: 0px;
+            --border-card: 2px solid #dfdfdf; border-color: #dfdfdf #000 #000 #dfdfdf; --shadow-card: none; --cursor-style: default;
+            animation: none;
         }
-        .slot.slot-new:hover {
-            animation: ultraShake 0.15s infinite; /* Aggressive Jitter Shake */
-            box-shadow: 0 0 40px #00f0ff, 0 0 80px rgba(0, 240, 255, 0.6), inset 0 0 30px rgba(0, 240, 255, 0.5);
-            border-color: #fff;
-        }
-        .slot.slot-new .game-title {
-            animation: rgbSplit 0.4s infinite reverse;
-            font-weight: 900;
-        }
+        body.theme-vapor .slot { animation: vaporFloat 4s ease-in-out infinite; }
+        @keyframes vaporFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
-        .thumbnail-area {
-            height: 180px; background: #0a0a0a; background-size: cover; background-position: center;
-            position: relative; cursor: pointer; display: flex; justify-content: center; align-items: center;
-            overflow: hidden;
+        /* ==========================================
+           3. UNLOCKABLE THEMES WITH ANIMATIONS
+           ========================================== */
+
+        /* GOLD VIP: Breathing luxurious aura */
+        body.theme-gold {
+            --bg-main: radial-gradient(circle at 50% 50%, #1a1813 0%, #050505 100%);
+            --bg-surface: linear-gradient(145deg, #1f1b0f, #0a0905);
+            --text-main: #f5e0a3; --accent-primary: #ffd700; --accent-secondary: #b8860b;
+            --radius-card: 4px; --radius-btn: 4px; --border-card: 1px solid #ffd700; --shadow-card: 0 10px 30px rgba(255, 215, 0, 0.15);
+            animation: none;
         }
-        .thumbnail-area::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.8) 100%);
+        body.theme-gold .slot { animation: goldAura 3s ease-in-out infinite alternate; }
+        @keyframes goldAura { from { box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1); } to { box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3); } }
+
+        /* BLOOD MOON: Double-beat heartbeat */
+        body.theme-blood {
+            --bg-main: radial-gradient(circle at 50% -20%, #4a0000 0%, #000000 70%);
+            --bg-surface: rgba(15, 0, 0, 0.9); --text-main: #ffaaaa; --accent-primary: #ff0000; --accent-secondary: #880000;
+            --radius-card: 0px; --radius-btn: 0px; --border-card: 1px solid #ff0000; --shadow-card: 0 15px 40px rgba(255,0,0,0.3);
+            animation: none;
         }
-        .slot:hover .thumbnail-area { background-size: 115%; transition: background-size 0.3s ease; }
-        .thumbnail-placeholder { font-size: 4em; font-weight: 900; color: rgba(255,255,255,0.1); }
+        body.theme-blood .slot { animation: bloodHeartbeat 1.5s infinite; transform-origin: center; }
+        @keyframes bloodHeartbeat { 0%, 100% { transform: scale(1); border-color: #ff0000; } 15% { transform: scale(1.02); border-color: #ff5555; box-shadow: 0 0 30px rgba(255,0,0,0.6); } 30% { transform: scale(1); border-color: #ff0000; } 45% { transform: scale(1.02); border-color: #ff5555; box-shadow: 0 0 30px rgba(255,0,0,0.6); } }
+
+        /* DEEP SPACE: Endless cosmic drift */
+        body.theme-space {
+            --bg-main: radial-gradient(circle at 20% 80%, #2b00ff 0%, transparent 40%), radial-gradient(circle at 80% 20%, #aa00ff 0%, #00001a 60%);
+            --bg-surface: rgba(10, 10, 30, 0.6); --text-main: #e6e6ff; --accent-primary: #bb88ff; --accent-secondary: #4400ff;
+            --radius-card: 24px; --radius-btn: 12px; --border-card: 1px solid rgba(255,255,255,0.1); --shadow-card: 0 0 40px rgba(170,0,255,0.2);
+            background-size: 200% 200%;
+            animation: spaceDrift 12s linear infinite alternate;
+        }
+        @keyframes spaceDrift { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+
+        /* ==========================================
+           4. ENDGAME THEMES WITH INTENSE ANIMATIONS
+           ========================================== */
+
+        /* CORRUPTED CORE: Aggressive screen tear & skew */
+        body.theme-glitch {
+            --bg-main: linear-gradient(45deg, #15001a 25%, #050010 75%);
+            --bg-surface: rgba(30, 0, 40, 0.75); --text-main: #e0b0ff; --accent-primary: #bd00ff; --accent-secondary: #00ff66;
+            --border-card: 2px dashed #bd00ff; --shadow-card: 0 0 30px rgba(189,0,255,0.3);
+            animation: none;
+        }
+        body.theme-glitch .app-title { animation: glitchText 0.3s infinite; }
+        @keyframes glitchText { 0% { transform: translate(0); text-shadow: 3px -3px 0px var(--accent-secondary); } 20% { transform: translate(-2px, 2px) skew(-5deg); text-shadow: -3px 3px 0px var(--accent-secondary); } 40% { transform: translate(2px, -2px) skew(5deg); text-shadow: 3px -3px 0px var(--accent-secondary); } 60% { transform: translate(-2px, -2px); text-shadow: -3px -3px 0px var(--accent-secondary); } 80% { transform: translate(2px, 2px); text-shadow: 3px 3px 0px var(--accent-secondary); } 100% { transform: translate(0); text-shadow: 3px -3px 0px var(--accent-secondary); } }
+
+        /* ARCADE LEGEND: Classic flashing insert coin text */
+        body.theme-legend {
+            --bg-main: #2b1810;
+            --bg-surface: #111111; --text-main: #ffea00; --accent-primary: #ffea00; --accent-secondary: #ff00ff;
+            --font-main: 'VT323', monospace; --radius-card: 4px; --radius-btn: 4px;
+            --border-card: 4px solid #ff00ff; --shadow-card: 0 0 20px #ff00ff;
+            animation: none;
+        }
+        body.theme-legend .slot { background: #000; border-top: 8px solid #ffea00; }
+        body.theme-legend .app-title { color: #ffea00; text-shadow: 4px 4px 0px #ff00ff; animation: arcadeBlink 1s step-end infinite; }
+        @keyframes arcadeBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* ABSOLUTE ZERO: Flowing iridescent liquid glass */
+        body.theme-god {
+            --bg-main: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #000000 100%);
+            --bg-surface: rgba(255, 255, 255, 0.05); --text-main: #f1f5f9; --accent-primary: #38bdf8; --accent-secondary: #e2e8f0;
+            --radius-card: 30px; --radius-btn: 15px; --border-card: 1px solid rgba(255,255,255,0.2);
+            --shadow-card: 0 0 50px rgba(56,189,248,0.25); backdrop-filter: blur(25px);
+            background-size: 300% 300%;
+            animation: godShimmer 8s ease infinite;
+        }
+        body.theme-god .app-title { background: linear-gradient(to right, #fff, #38bdf8, #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 12px; font-weight: 900; filter: drop-shadow(0 0 20px rgba(56,189,248,0.5)); animation: godTextShine 3s linear infinite; }
+        @keyframes godShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes godTextShine { to { background-position: 200% center; } }
+        body.theme-god .slot:hover { border-color: #38bdf8; }
+        body.theme-god .btn-play { background: rgba(56,189,248,0.1); border-color: #38bdf8; }
+
+        /* ==========================================
+           THEME VAULT SYSTEM
+           ========================================== */
+        #theme-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 99990;
+            background: var(--bg-surface); border: 2px solid var(--accent-primary); color: var(--accent-primary);
+            padding: 10px 20px; font-weight: 900; font-family: var(--font-main); border-radius: var(--radius-btn);
+            cursor: inherit; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
+        }
+        #theme-btn:hover { background: var(--accent-primary); color: #000; box-shadow: 0 0 20px var(--accent-primary); transform: scale(1.05); }
+        body.in-game #theme-btn { display: none; }
+
+        #theme-vault-modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 100000; backdrop-filter: blur(15px); flex-direction: column; align-items: center; justify-content: center;
+        }
+        .vault-content {
+            background: var(--bg-surface); border: 2px solid var(--accent-secondary); width: 90%; max-width: 650px;
+            border-radius: var(--radius-card); padding: 40px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            max-height: 85vh; overflow-y: auto;
+        }
+        .vault-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
+        .vault-title { font-size: 2rem; font-weight: 900; margin: 0; color: var(--accent-primary); }
+        .close-vault { background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
        
-        /* BASE BADGE */
-        .badge {
-            position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 30px;
-            font-size: 0.7rem; font-weight: 800; color: #fff; letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 2; backdrop-filter: blur(5px);
-        }
+        .playtime-tracker { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 30px; border: 1px solid var(--accent-secondary); }
+        .playtime-tracker h3 { margin: 0 0 5px 0; color: #8892b0; font-size: 0.9rem; letter-spacing: 1px; }
+        .playtime-tracker .time { font-size: 2.3rem; font-weight: 900; color: #fff; font-family: monospace; }
 
-        /* ULTRA POP BADGE SYSTEM */
-        .badge.pop-badge {
-            text-transform: uppercase;
-            font-weight: 900;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
-            border: 2px solid #ffffff;
-            overflow: hidden;
-            transform: scale(1.1);
+        .theme-option {
+            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 8px; margin-bottom: 15px; transition: 0.2s;
         }
-
-        /* Mach Speed Laser Sweep */
-        .badge.pop-badge::before {
-            content: '';
-            position: absolute; top: -50%; left: -100%;
-            width: 40%; height: 200%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-            transform: rotate(30deg);
-            animation: laserSheen 0.8s infinite linear; /* Blazing fast sheen path */
-        }
-
-        /* HOT Tag Overdrive: Hyper Vibrating Fire-Glow */
-        .badge.pop-hot {
-            animation: hotPulse 0.2s infinite alternate linear;
-            box-shadow: 0 0 25px #ff0055, 0 0 50px #ff0055, 0 4px 15px rgba(0,0,0,0.8);
-            background: #ff0055 !important;
-        }
-
-        /* NEW Tag Overdrive: Insane Bounce Multi-Glow */
-        .badge.pop-new {
-            animation: newFloat 0.25s infinite alternate linear;
-            box-shadow: 0 0 25px #00f0ff, 0 0 50px #00f0ff, 0 4px 15px rgba(0,0,0,0.8);
-            background: #00f0ff !important;
-        }
-
-        .slot-controls { padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; position: relative; z-index: 2; }
-        .game-title { margin: 0; font-size: 1.4rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-main); }
-        .btn-play {
-            background: rgba(255,255,255,0.05); color: var(--accent-primary); border: 1px solid rgba(0, 240, 255, 0.3);
-            padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; letter-spacing: 1px; width: 100%;
-            transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
-        .slot:hover .btn-play { background: var(--accent-primary); color: #000; box-shadow: 0 0 15px rgba(0,240,255,0.4); }
+        .theme-option.unlocked:hover { background: rgba(255,255,255,0.07); border-color: var(--accent-primary); }
+        .theme-info h4 { margin: 0 0 5px 0; font-size: 1.2rem; }
+        .theme-info p { margin: 0; font-size: 0.85rem; color: #8892b0; }
        
-        /* Interactive Blinking Play Buttons on Crazy Slots */
-        .slot.slot-hot:hover .btn-play { background: #ff0055; color: #fff; border-color: #fff; box-shadow: 0 0 25px #ff0055; font-weight: 900; }
-        .slot.slot-new:hover .btn-play { background: #00f0ff; color: #000; border-color: #fff; box-shadow: 0 0 25px #00f0ff; font-weight: 900; }
+        .theme-action-btn { padding: 8px 15px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; font-family: var(--font-main); }
+        .btn-equip { background: var(--accent-primary); color: #000; }
+        .btn-equipped { background: transparent; border: 2px solid var(--accent-primary); color: var(--accent-primary); cursor: default; }
+        .theme-locked { opacity: 0.4; border-color: rgba(255, 0, 85, 0.2) !important; }
+        .locked-timer { color: #ff4444; font-family: monospace; font-weight: bold; font-size: 1rem; text-align: right; }
 
-        /* FULLSCREEN overlay */
-        #fullscreen-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; z-index: 10000; flex-direction: column;
-            animation: fadeIn 0.3s ease forwards;
-        }
-        #game-header {
-            height: 60px; background: #050505; display: flex; align-items: center; padding: 0 25px;
-            border-bottom: 1px solid rgba(255,255,255,0.05); justify-content: space-between;
-        }
-        #back-btn {
-            background: rgba(255,0,85,0.1); color: var(--accent-secondary);
-            padding: 8px 20px; border: 1px solid rgba(255,0,85,0.3); border-radius: 30px;
-            cursor: pointer; font-weight: 700; transition: all 0.2s; display: flex; align-items: center; gap: 10px;
-        }
-        #back-btn:hover { background: var(--accent-secondary); color: #fff; box-shadow: 0 0 15px rgba(255,0,85,0.4); }
-        #playing-title { font-weight: 700; letter-spacing: 1px; color: var(--text-muted); }
-        #game-frame { width: 100%; height: calc(100vh - 60px); border: none; background: #000; }
+        /* CORE WEB LAYOUT STYLING */
+        #landing-screen { position: fixed; inset: 0; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .landing-content { text-align: center; opacity: 0; transform: translateY(30px); animation: fadeUp 0.8s forwards; }
+        .enter-btn { padding: 18px 55px; font-size: 1.3rem; font-weight: 900; letter-spacing: 3px; color: var(--text-main); background: var(--bg-surface); border: 3px solid var(--accent-primary); border-radius: var(--radius-btn); cursor: inherit; transition: 0.2s; text-transform: uppercase; }
+        .enter-btn:hover { background: var(--accent-primary); color: #000; transform: scale(1.05); }
 
-        /* ANIMATIONS */
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes pulseGlow { 0% { filter: drop-shadow(0 0 10px rgba(0,240,255,0.2)); } 100% { filter: drop-shadow(0 0 25px rgba(0,240,255,0.6)); } }
+        #crt-flash { position: fixed; inset: 0; background: #fff; z-index: 100000; pointer-events: none; transform: scaleY(0.005) scaleX(0); opacity: 0; }
+        .crt-animate { animation: crtPowerOn 0.9s forwards; }
+
+        #arcade-container { padding: 50px 20px; max-width: 1400px; margin: 0 auto; display: none; opacity: 0; }
+        .app-title { text-align: center; font-size: 4.5rem; font-weight: 900; letter-spacing: 5px; margin-bottom: 60px; text-transform: uppercase; }
+
+        .section-title { font-size: 2rem; font-weight: 900; margin-bottom: 35px; letter-spacing: 2px; display: flex; align-items: center; gap: 15px; }
+        .section-title::after { content: ''; flex: 1; height: 2px; background: linear-gradient(90deg, currentColor, transparent); }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 40px; margin-bottom: 80px; }
        
-        /* CRAZY OVERDRIVE KEYFRAMES */
-        @keyframes laserSheen {
-            0% { left: -110%; }
-            100% { left: 160%; }
-        }
-        @keyframes ultraShake {
-            0% { transform: translateY(-10px) translateX(0px) rotate(0deg); }
-            25% { transform: translateY(-12px) translateX(-1.5px) rotate(-0.5deg); }
-            50% { transform: translateY(-8px) translateX(1.5px) rotate(0.5deg); }
-            75% { transform: translateY(-11px) translateX(-1px) rotate(-0.3deg); }
-            100% { transform: translateY(-9px) translateX(1px) rotate(0.3deg); }
-        }
-        @keyframes crazyHotGlow {
-            0% { box-shadow: 0 0 15px rgba(255, 0, 85, 0.2), inset 0 0 10px rgba(255,0,85,0.1); }
-            100% { box-shadow: 0 0 35px rgba(255, 0, 85, 0.7), inset 0 0 20px rgba(255,0,85,0.4); }
-        }
-        @keyframes crazyNewGlow {
-            0% { box-shadow: 0 0 15px rgba(0, 240, 255, 0.2), inset 0 0 10px rgba(0,240,255,0.1); }
-            100% { box-shadow: 0 0 35px rgba(0, 240, 255, 0.7), inset 0 0 20px rgba(0,240,255,0.4); }
-        }
-        @keyframes hotPulse {
-            0% { transform: scale(1.1) rotate(-3deg); filter: hue-rotate(0deg); }
-            100% { transform: scale(1.25) rotate(4deg); filter: hue-rotate(15deg); }
-        }
-        @keyframes newFloat {
-            0% { transform: translateY(0) scale(1.1) rotate(2deg); }
-            100% { transform: translateY(-5px) scale(1.22) rotate(-2deg); }
-        }
-        @keyframes rgbSplit {
-            0% { text-shadow: 2.5px 0 0 #ff0055, -2.5px 0 0 #00f0ff; }
-            50% { text-shadow: -2.5px 0 0 #ff0055, 2.5px 0 0 #00f0ff; }
-            100% { text-shadow: 2.5px 0 0 #ff0055, -2.5px 0 0 #00f0ff; }
-        }
+        .slot { background: var(--bg-surface); border-radius: var(--radius-card); overflow: hidden; border: var(--border-card); backdrop-filter: blur(12px); transition: transform 0.3s, box-shadow 0.3s; opacity: 0; transform: translateY(20px); position: relative; }
+        .slot:hover { transform: translateY(-10px) scale(1.03) !important; box-shadow: var(--shadow-card); }
+        .thumbnail-area { height: 190px; background: #06060a; background-size: cover; background-position: center; position: relative; cursor: inherit; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .slot:hover .thumbnail-area { background-size: 112%; transition: 0.3s; }
+       
+        /* THE BADGE SYSTEM */
+        .badge { position: absolute; top: 15px; right: 15px; padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 900; z-index: 4; text-transform: uppercase; background: #333; color: #fff; border: 2px solid #fff; }
+        .slot-controls { padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; }
+        .game-title { margin: 0; font-size: 1.35rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-play { padding: 13px; border-radius: var(--radius-btn); cursor: inherit; font-weight: 700; letter-spacing: 1px; width: 100%; transition: 0.2s; text-transform: uppercase; background: transparent; border: 1px solid var(--text-main); color: var(--text-main); }
+        .slot:hover .btn-play { background: var(--text-main); color: var(--bg-surface); border-color: var(--text-main); }
+
+        #fullscreen-overlay { display: none; position: fixed; inset: 0; background: var(--bg-surface); z-index: 100000; flex-direction: column; }
+        #game-header { height: 60px; display: flex; align-items: center; padding: 0 25px; border-bottom: 2px solid var(--accent-primary); justify-content: space-between; }
+        #back-btn { background: transparent; color: var(--text-main); border: 2px solid var(--accent-primary); padding: 8px 22px; font-weight: 700; cursor: inherit; border-radius: var(--radius-btn); }
+        #playing-title { font-weight: 700; letter-spacing: 1px; color: var(--text-main); }
+        #game-frame { width: 100%; height: calc(100vh - 60px); border: none; }
+
+        @keyframes crtPowerOn { 0% { transform: scaleY(0.002) scaleX(0); opacity: 1; } 35% { transform: scaleY(0.002) scaleX(1); opacity: 1; } 65% { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(2); } 100% { transform: scaleY(1) scaleX(1); opacity: 0; filter: brightness(1); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
+    <div id="ambient-scanlines"></div>
+
+    <button id="theme-btn" onclick="openVault()">[ THEME VAULT ]</button>
+
+    <div id="theme-vault-modal">
+        <div class="vault-content">
+            <div class="vault-header">
+                <h2 class="vault-title">THEME VAULT</h2>
+                <button class="close-vault" onclick="closeVault()">×</button>
+            </div>
+           
+            <div class="playtime-tracker">
+                <h3>TOTAL ARCADE PLAYTIME</h3>
+                <div class="time" id="vault-time-display">00:00:00</div>
+            </div>
+
+            <div id="theme-list-container"></div>
+        </div>
+    </div>
+
     <div id="landing-screen">
         <div class="landing-content">
-            <img id="logo-img" class="logo-placeholder" src="script.png" alt="ScriptCade Logo">
-            <br>
-            <button id="enter-btn" class="enter-btn" onclick="enterArcade()">ENTER</button>
+            <h1 class="app-title" style="margin-bottom: 20px;">ScriptCade</h1>
+            <button id="enter-btn" class="enter-btn" onclick="enterArcade()">BOOT.EXE</button>
         </div>
     </div>
 
     <div id="arcade-container">
         <h1 class="app-title">ScriptCade</h1>
        
-        <h2 class="section-title" style="color: var(--accent-secondary);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
-            HOT RELEASES
-        </h2>
+        <h2 class="section-title">🔥 VITAL RELEASES 🔥</h2>
         <div class="game-grid" id="hot-grid"></div>
 
-        <h2 class="section-title" style="color: var(--accent-primary);">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            ALL GAMES
-        </h2>
+        <h2 class="section-title">💾 SYSTEM MAINBOARD 💾</h2>
         <div class="game-grid" id="main-grid"></div>
     </div>
 
     <div id="fullscreen-overlay">
         <div id="game-header">
-            <button id="back-btn" onclick="closeGame()">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-                EXIT GAME
-            </button>
+            <button id="back-btn" onclick="closeGame()">◀ TERMINATE</button>
             <span id="playing-title"></span>
         </div>
         <iframe id="game-frame" sandbox="allow-scripts allow-pointer-lock allow-same-origin allow-forms"></iframe>
     </div>
 
     <script>
-        // --- 1. SYSTEM FUNCTIONS ---
-       
-        function enterArcade() {
-            const landing = document.getElementById('landing-screen');
-            const arcade = document.getElementById('arcade-container');
-           
-            landing.style.transform = 'translateY(-50px)';
-            landing.style.opacity = '0';
-           
-            setTimeout(() => {
-                landing.style.display = 'none';
-                arcade.style.display = 'block';
+        // --- 0. PLAYTIME & EXPANDED THEME VAULT ---
+        let totalPlaytimeSeconds = parseInt(localStorage.getItem('scriptcade-playtime')) || 0;
+        let playtimeInterval = null;
+        let activeTheme = localStorage.getItem('scriptcade-theme') || 'default';
+
+        const themes = [
+            { id: 'default', name: 'Neon Cyber', desc: 'The classic ScriptCade experience.', req: 0 },
+            { id: 'theme-hacker', name: 'Terminal Hacker', desc: 'Pure code layout. No curves.', req: 0 },
+            { id: 'theme-retro', name: 'Retro Synthwave', desc: '80s arcade sunset aesthetic.', req: 0 },
+            { id: 'theme-vapor', name: 'Vaporwave OS', desc: 'Windows 95 interface styling.', req: 0 },
+            { id: 'theme-gold', name: 'Gold VIP', desc: 'Sleek black and gold configuration.', req: 60 },
+            { id: 'theme-blood', name: 'Blood Moon', desc: 'Dark, crimson nightmare fuel.', req: 300 },
+            { id: 'theme-space', name: 'Deep Space', desc: 'Cosmic galaxy background matrix.', req: 600 },
+            { id: 'theme-glitch', name: 'Corrupted Core', desc: '⚠️ GLITCH WORKSTATION UNLOCKED ⚠️', req: 3600 },
+            { id: 'theme-legend', name: 'Arcade Legend', desc: '🔥 TRUE RETRO CABINET ARCHITECTURE 🔥', req: 18000 },
+            { id: 'theme-god', name: 'Absolute Zero', desc: '👑 ULTIMATE 24-HOUR GOD MODE PLATINUM 👑', req: 86400 }
+        ];
+
+        function formatTime(totalSecs) {
+            const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
+            const m = Math.floor((totalSecs % 3600) / 60).toString().padStart(2, '0');
+            const s = (totalSecs % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function applyTheme(themeId) {
+            document.body.className = document.body.className.replace(/\btheme-[^\s]+\b/g, '');
+            if (themeId !== 'default') document.body.classList.add(themeId);
+            activeTheme = themeId;
+            localStorage.setItem('scriptcade-theme', themeId);
+            renderVault();
+        }
+
+        function openVault() {
+            document.getElementById('theme-vault-modal').style.display = 'flex';
+            renderVault();
+        }
+
+        function closeVault() { document.getElementById('theme-vault-modal').style.display = 'none'; }
+
+        function renderVault() {
+            document.getElementById('vault-time-display').innerText = formatTime(totalPlaytimeSeconds);
+            const container = document.getElementById('theme-list-container');
+            container.innerHTML = '';
+
+            themes.forEach(theme => {
+                const isUnlocked = totalPlaytimeSeconds >= theme.req;
+                const isEquipped = activeTheme === theme.id;
                
+                let buttonHTML = '';
+                if (!isUnlocked) {
+                    const diff = theme.req - totalPlaytimeSeconds;
+                    buttonHTML = `<div class="locked-timer">NEED ${formatTime(diff)}</div>`;
+                } else if (isEquipped) {
+                    buttonHTML = `<button class="theme-action-btn btn-equipped">EQUIPPED</button>`;
+                } else {
+                    buttonHTML = `<button class="theme-action-btn btn-equip" onclick="applyTheme('${theme.id}')">EQUIP</button>`;
+                }
+
+                container.innerHTML += `
+                    <div class="theme-option ${isUnlocked ? 'unlocked' : 'theme-locked'}">
+                        <div class="theme-info">
+                            <h4>${theme.name} ${!isUnlocked ? '🔒' : ''}</h4>
+                            <p>${theme.desc}</p>
+                        </div>
+                        ${buttonHTML}
+                    </div>
+                `;
+            });
+        }
+
+        window.onload = () => { applyTheme(activeTheme); };
+
+        // --- 1. SYSTEM INITIALIZATION ---
+        function enterArcade() {
+            document.getElementById('enter-btn').innerText = "EXECUTING...";
+            setTimeout(() => {
+                const flash = document.createElement('div');
+                flash.id = 'crt-flash';
+                document.body.appendChild(flash);
+                setTimeout(() => { flash.classList.add('crt-animate'); }, 10);
                 setTimeout(() => {
+                    document.getElementById('landing-screen').style.display = 'none';
+                    const arcade = document.getElementById('arcade-container');
+                    arcade.style.display = 'block';
                     arcade.style.opacity = '1';
                     loadHotGames();
                     loadGames();
-                }, 50);
-            }, 800);
-        }
-
-        function loadHotGames() {
-            renderGrid(hotGamesList, 'hot-grid', 'hot');
-        }
-
-        function loadGames() {
-            renderGrid(gamesList, 'main-grid', 'main');
+                }, 450);
+                setTimeout(() => { flash.remove(); }, 1200);
+            }, 300);
         }
 
         function renderGrid(list, elementId, type) {
@@ -334,105 +379,89 @@
             grid.innerHTML = '';
             list.forEach((game, index) => {
                 const slot = document.createElement('div');
-               
                 let badgeHTML = '';
-                let slotPopClass = '';
                
                 if (game.badgeText) {
-                    const textUpper = game.badgeText.toUpperCase();
-                    let badgePopClass = '';
-                   
-                    if (textUpper === 'HOT') {
-                        badgePopClass = 'pop-badge pop-hot';
-                        slotPopClass = 'slot-hot';
-                    } else if (textUpper === 'NEW') {
-                        badgePopClass = 'pop-badge pop-new';
-                        slotPopClass = 'slot-new';
-                    }
-                   
-                    const textColor = getContrastYIQ(game.badgeColor) === 'black' ? '#000' : '#fff';
-                    badgeHTML = `<span class="badge ${badgePopClass}" style="background:${game.badgeColor || 'var(--accent-primary)'}; color:${textColor}">${game.badgeText}</span>`;
+                    let customColorStyle = game.badgeColor
+                        ? `style="background-color: ${game.badgeColor} !important; border-color: ${game.badgeColor} !important; box-shadow: 0 0 15px ${game.badgeColor}; color: #fff !important;"`
+                        : '';
+                    badgeHTML = `<span class="badge" ${customColorStyle}>${game.badgeText}</span>`;
                 }
                
-                slot.className = `slot ${slotPopClass}`;
-                slot.style.animation = `fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.15 + 0.2}s forwards`;
+                slot.className = `slot`;
+                slot.style.animation = `fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.06}s forwards`;
                
                 slot.innerHTML = `
                     <div class="thumbnail-area" onclick="playGame('${type}', ${index})" style="background-image: url('${game.img}')">
-                        ${!game.img || game.img === 'image' ? '<span class="thumbnail-placeholder">?</span>' : ''}
+                        ${!game.img || game.img === 'image' ? '<span style="font-size:3rem;font-weight:700;color:rgba(255,255,255,0.2);">IMG_NULL</span>' : ''}
                         ${badgeHTML}
                     </div>
                     <div class="slot-controls">
                         <h3 class="game-title" title="${game.title}">${game.title}</h3>
-                        <button class="btn-play" onclick="playGame('${type}', ${index})">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                            PLAY NOW
-                        </button>
+                        <button class="btn-play" onclick="playGame('${type}', ${index})">LAUNCH</button>
                     </div>
                 `;
                 grid.appendChild(slot);
             });
         }
 
-        function getContrastYIQ(hexcolor){
-            if(!hexcolor) return 'black';
-            hexcolor = hexcolor.replace("#", "");
-            if (hexcolor.length === 3) hexcolor = hexcolor.split('').map(x => x+x).join('');
-            var r = parseInt(hexcolor.substr(0,2),16);
-            var g = parseInt(hexcolor.substr(2,2),16);
-            var b = parseInt(hexcolor.substr(4,2),16);
-            var yiq = ((r*299)+(g*587)+(b*114))/1000;
-            return (yiq >= 128) ? 'black' : 'white';
-        }
+        function loadHotGames() { renderGrid(hotGamesList, 'hot-grid', 'hot'); }
+        function loadGames() { renderGrid(gamesList, 'main-grid', 'main'); }
 
         function playGame(listType, index) {
             let data = listType === 'hot' ? hotGamesList[index] : gamesList[index];
             if (!data) return;
            
-            document.getElementById('playing-title').innerText = "Playing: " + data.title;
+            document.body.classList.add('in-game');
+            document.getElementById('playing-title').innerText = "CONNECTED: " + data.title.toUpperCase();
+           
             const overlay = document.getElementById('fullscreen-overlay');
             const frame = document.getElementById('game-frame');
-           
             overlay.style.display = 'flex';
             frame.src = data.url;
-           
             if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch((e) => {}); }
+
+            playtimeInterval = setInterval(() => {
+                totalPlaytimeSeconds++;
+                localStorage.setItem('scriptcade-playtime', totalPlaytimeSeconds);
+                if(document.getElementById('theme-vault-modal').style.display === 'flex') {
+                    renderVault();
+                }
+            }, 1000);
         }
 
         function closeGame() {
+            document.body.classList.remove('in-game');
             document.getElementById('fullscreen-overlay').style.display = 'none';
             document.getElementById('game-frame').src = '';
             if (document.exitFullscreen) { document.exitFullscreen().catch((e) => {}); }
+            clearInterval(playtimeInterval);
         }
 
-        // --- 2. GAME LISTS ---
+        // --- 2. GAME ARRAYS (PERFECTLY LINED UP) ---
         const hotGamesList = [
             {
                 title: "Blade Ball",
                 img: "bladethumb.png",
                 badgeText: "HOT",
-                badgeColor: "#ff0055",
                 url: "https://scriptcade.github.io/blade-ball/"
             },
             {
                 title: "Geometry Dash Maker",
                 img: "gdthumb.jpeg",
                 badgeText: "HOT",
-                badgeColor: "#ff0055",
                 url: "https://scriptcade.github.io/this-is-a-tesst-changing-later/"
             },
             {
                 title: "Grow A Garden",
                 img: "GrowAGardenthumb.avif",
                 badgeText: "HOT",
-                badgeColor: "#ff0055",
                 url: "https://scriptcade.github.io/grow-a-garden-gemini/"
             },
             {
                 title: "Tater Tot Clicker",
-                img: "taterthumb.png",
+                img: "GrowAGardenthumb.avif",
                 badgeText: "New",
-                badgeColor: "#00f0ff",
                 url: "https://scriptcade.github.io/tatertot/"
             }
         ];
@@ -442,7 +471,7 @@
                 title: "Among Us Clone",
                 img: "amongusthumb.webp",
                 badgeText: "FIRST PUBLISHED",
-                badgeColor: "#00ff00",
+                badgeColor: "#9900ff",
                 url: "https://scriptcade.github.io/among-us-gemini/"
             },
             {
@@ -454,7 +483,7 @@
                 title: "Block Blast",
                 img: "blockthumb.jpeg",
                 badgeText: "SAVES DATA",
-                badgeColor: "#E02222",
+                badgeColor: "#00cc66",
                 url: "https://scriptcade.github.io/block-blast/"
             },
             {
@@ -466,17 +495,16 @@
                 title: "Block Shooter",
                 img: "BLOCK SHOOTER.png",
                 badgeText: "NEW",
-                badgeColor: "#00f0ff",
                 url: "https://scriptcade.github.io/block-shooter/"
             },
             {
                 title: "Doodle Glider",
                 img: "Doodleglider.jpeg",
                 badgeText: "One Prompt",
-                badgeColor: "#fff200",
+                badgeColor: "#ff9900",
                 url: "https://relthecreator.github.io/Doodle-Glider/"
             },
-             {
+            {
                 title: "Battle Arena",
                 img: "Doodleglider.jpeg",
                 badgeText: "Made by Josh",
