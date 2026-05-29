@@ -1,27 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6853980997029870"
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6853980997029870" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScriptCade - The Ultimate Grind</title>
+    <title>ScriptCade - Maximum Overdrive</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=VT323&display=swap');
 
-        /* === 1. GLOBAL BASE VARIABLES & DEFAULT ANIMATION === */
+        /* === 1. GLOBAL BASE VARIABLES & INTENSE PULSE === */
         :root {
-            --bg-main: radial-gradient(circle at 15% 30%, rgba(0, 240, 255, 0.15) 0%, transparent 50%), radial-gradient(circle at 85% 70%, rgba(255, 0, 85, 0.15) 0%, transparent 50%), #030307;
-            --bg-surface: rgba(12, 12, 20, 0.8);
+            --bg-main: radial-gradient(circle at 15% 30%, rgba(0, 240, 255, 0.2) 0%, transparent 50%), radial-gradient(circle at 85% 70%, rgba(255, 0, 85, 0.2) 0%, transparent 50%), #020205;
+            --bg-surface: rgba(12, 12, 20, 0.85);
             --text-main: #ffffff;
             --accent-primary: #00f0ff;
             --accent-secondary: #ff0055;
             --font-main: 'Outfit', system-ui, sans-serif;
-            --radius-card: 16px;
-            --radius-btn: 10px;
-            --border-card: 2px solid rgba(255,255,255,0.06);
-            --shadow-card: 0 20px 45px rgba(0,0,0,0.5);
+            --radius-card: 20px;
+            --radius-btn: 12px;
+            --border-card: 2px solid rgba(255, 255, 255, 0.08);
+            --shadow-card: 0 25px 50px rgba(0,0,0,0.7);
             --cursor-style: crosshair;
         }
 
@@ -30,234 +32,201 @@
             font-family: var(--font-main); margin: 0; min-height: 100vh;
             overflow-x: hidden; cursor: var(--cursor-style);
             background-size: 200% 200%;
-            animation: defaultPulse 15s ease infinite alternate;
+            animation: defaultPulse 8s ease infinite alternate;
         }
 
         @keyframes defaultPulse { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-        /* AMBIENT CRT SCANLINES */
-        #ambient-scanlines { position: fixed; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%); z-index: 99999; background-size: 100% 4px; pointer-events: none; }
+        #ambient-scanlines { position: fixed; inset: 0; background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.15) 50%); z-index: 99999; background-size: 100% 4px; pointer-events: none; }
         body.in-game #ambient-scanlines { display: none; }
 
-        /* ==========================================
-           2. BASE THEMES WITH ANIMATIONS
-           ========================================== */
-           
-        /* HACKER: Scrolling terminal effect */
-        body.theme-hacker {
-            --bg-main: repeating-linear-gradient(0deg, #020a02 0px, #020a02 2px, #000 2px, #000 4px);
-            --bg-surface: #000000; --text-main: #00ff00; --accent-primary: #00ff00; --accent-secondary: #008800;
-            --font-main: 'VT323', monospace; --radius-card: 0px; --radius-btn: 0px;
-            --border-card: 1px solid #00ff00; --shadow-card: 0 0 10px rgba(0,255,0,0.1); --cursor-style: text;
-            animation: hackerScroll 10s linear infinite;
-        }
-        @keyframes hackerScroll { from { background-position: 0 0; } to { background-position: 0 100vh; } }
+        /* === 2. THEMES MATRIX === */
+        body.theme-hacker { --bg-main: repeating-linear-gradient(0deg, #020a02 0px, #020a02 2px, #000 2px, #000 4px); --bg-surface: #000000; --text-main: #00ff00; --accent-primary: #00ff00; --accent-secondary: #008800; --font-main: 'VT323', monospace; --radius-card: 0px; --radius-btn: 0px; --border-card: 1px solid #00ff00; --shadow-card: 0 0 20px rgba(0,255,0,0.2); --cursor-style: text; }
+        body.theme-retro { --bg-main: linear-gradient(180deg, #1a0b2e 0%, #4a154b 60%, #ff8800 100%); --bg-surface: rgba(20, 10, 40, 0.92); --text-main: #ffeeff; --accent-primary: #f700ff; --accent-secondary: #00e5ff; --font-main: 'Outfit', sans-serif; --radius-card: 12px; --radius-btn: 24px; --border-card: 2px solid #f700ff; --shadow-card: 0 15px 35px rgba(247,0,255,0.35); }
+        body.theme-vapor { --bg-main: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); --bg-surface: #c0c0c0; --text-main: #000000; --accent-primary: #000080; --accent-secondary: #008080; --font-main: 'Tahoma', sans-serif; --radius-card: 0px; --radius-btn: 0px; --border-card: 2px solid #dfdfdf; border-color: #dfdfdf #000 #000 #dfdfdf; --shadow-card: none; --cursor-style: default; }
+        body.theme-gold { --bg-main: radial-gradient(circle at 50% 50%, #15130e 0%, #030303 100%); --bg-surface: linear-gradient(145deg, #1a160d, #060503); --text-main: #f5e0a3; --accent-primary: #ffd700; --accent-secondary: #b8860b; --radius-card: 6px; --radius-btn: 4px; --border-card: 1px solid #ffd700; --shadow-card: 0 15px 40px rgba(255, 215, 0, 0.25); }
+        body.theme-blood { --bg-main: radial-gradient(circle at 50% -20%, #3d0000 0%, #000000 75%); --bg-surface: rgba(12, 0, 0, 0.95); --text-main: #ffaaaa; --accent-primary: #ff0000; --accent-secondary: #660000; --radius-card: 0px; --radius-btn: 0px; --border-card: 1px solid #ff0000; --shadow-card: 0 15px 55px rgba(255,0,0,0.4); }
+        body.theme-space { --bg-main: radial-gradient(circle at 20% 80%, #2000ff 0%, transparent 45%), radial-gradient(circle at 80% 20%, #9900ff 0%, #000014 65%); --bg-surface: rgba(8, 8, 26, 0.75); --text-main: #e6e6ff; --accent-primary: #bb88ff; --accent-secondary: #3300ff; --radius-card: 26px; --radius-btn: 14px; --border-card: 1px solid rgba(255,255,255,0.12); --shadow-card: 0 0 50px rgba(170,0,255,0.3); }
+        body.theme-glitch { --bg-main: linear-gradient(45deg, #100014 25%, #03000a 75%); --bg-surface: rgba(24, 0, 33, 0.82); --text-main: #e0b0ff; --accent-primary: #bd00ff; --accent-secondary: #00ff66; --border-card: 1px solid rgba(189,0,255,0.7); --shadow-card: 0 0 40px rgba(189,0,255,0.45); }
+        body.theme-legend { --bg-main: #20100a; --bg-surface: #0a0a0a; --text-main: #ffea00; --accent-primary: #ffea00; --accent-secondary: #ff00ff; --font-main: 'VT323', monospace; --radius-card: 4px; --radius-btn: 4px; --border-card: 2px solid #ff00ff; --shadow-card: 0 0 25px rgba(255,0,255,0.45); }
+        body.theme-god { --bg-main: linear-gradient(135deg, #090d1a 0%, #13255c 50%, #000000 100%); --bg-surface: rgba(255, 255, 255, 0.06); --text-main: #f1f5f9; --accent-primary: #38bdf8; --accent-secondary: #e2e8f0; --radius-card: 32px; --radius-btn: 16px; --border-card: 1px solid rgba(255,255,255,0.15); --shadow-card: 0 0 50px rgba(56,189,248,0.25); backdrop-filter: blur(25px); }
 
-        /* RETRO: Pulsing outrun neon */
-        body.theme-retro {
-            --bg-main: linear-gradient(180deg, #1a0b2e 0%, #4a154b 60%, #ff8800 100%);
-            --bg-surface: rgba(20, 10, 40, 0.9); --text-main: #ffeeff; --accent-primary: #f700ff; --accent-secondary: #00e5ff;
-            --font-main: 'Outfit', sans-serif; --radius-card: 8px; --radius-btn: 20px;
-            --border-card: 2px solid #f700ff; --shadow-card: 0 10px 25px rgba(247,0,255,0.2);
-            animation: none;
-        }
-        body.theme-retro .app-title { animation: retroGlow 2s ease-in-out infinite alternate; }
-        @keyframes retroGlow { from { text-shadow: 0 0 10px #f700ff, 0 0 20px #f700ff; } to { text-shadow: 0 0 20px #00e5ff, 0 0 30px #00e5ff; } }
+        /* === 3. TOP NAVIGATION BUTTONS === */
+        .nav-btn-container { position: fixed; top: 20px; right: 20px; z-index: 99990; display: flex; gap: 15px; }
+        .sys-btn { background: var(--bg-surface); border: 2px solid var(--accent-primary); color: var(--accent-primary); padding: 12px 24px; font-weight: 900; font-family: var(--font-main); border-radius: var(--radius-btn); cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 0 15px rgba(0, 240, 255, 0.15); }
+        .sys-btn:hover { background: var(--accent-primary); color: #000; box-shadow: 0 0 25px var(--accent-primary); transform: scale(1.05); }
+        .sys-btn.btn-stats { border-color: #ff0055; color: #ff0055; box-shadow: 0 0 15px rgba(255, 0, 85, 0.15); }
+        .sys-btn.btn-stats:hover { background: #ff0055; color: #fff; box-shadow: 0 0 25px #ff0055; }
+        body.in-game .nav-btn-container { display: none; }
 
-        /* VAPORWAVE: Floaty OS windows */
-        body.theme-vapor {
-            --bg-main: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            --bg-surface: #c0c0c0; --text-main: #000000; --accent-primary: #000080; --accent-secondary: #008080;
-            --font-main: 'Tahoma', sans-serif; --radius-card: 0px; --radius-btn: 0px;
-            --border-card: 2px solid #dfdfdf; border-color: #dfdfdf #000 #000 #dfdfdf; --shadow-card: none; --cursor-style: default;
-            animation: none;
-        }
-        body.theme-vapor .slot { animation: vaporFloat 4s ease-in-out infinite; }
-        @keyframes vaporFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        /* === 4. MODALS === */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(2, 2, 5, 0.95); z-index: 100000; backdrop-filter: blur(25px); flex-direction: column; align-items: center; justify-content: center; }
+        .modal-content { background: var(--bg-surface); border: 2px solid var(--accent-primary); width: 92%; max-width: 820px; border-radius: var(--radius-card); padding: 35px; box-shadow: 0 0 50px rgba(0, 240, 255, 0.15), inset 0 0 30px rgba(0,0,0,0.6); max-height: 85vh; overflow-y: auto; box-sizing: border-box; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .modal-title { font-size: 1.8rem; font-weight: 900; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+        .close-modal { background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; transition: 0.2s; opacity: 0.7; }
+        .close-modal:hover { color: var(--accent-secondary); opacity: 1; transform: scale(1.15); }
 
-        /* ==========================================
-           3. UNLOCKABLE THEMES WITH ANIMATIONS
-           ========================================== */
-
-        /* GOLD VIP: Breathing luxurious aura */
-        body.theme-gold {
-            --bg-main: radial-gradient(circle at 50% 50%, #1a1813 0%, #050505 100%);
-            --bg-surface: linear-gradient(145deg, #1f1b0f, #0a0905);
-            --text-main: #f5e0a3; --accent-primary: #ffd700; --accent-secondary: #b8860b;
-            --radius-card: 4px; --radius-btn: 4px; --border-card: 1px solid #ffd700; --shadow-card: 0 10px 30px rgba(255, 215, 0, 0.15);
-            animation: none;
-        }
-        body.theme-gold .slot { animation: goldAura 3s ease-in-out infinite alternate; }
-        @keyframes goldAura { from { box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1); } to { box-shadow: 0 15px 40px rgba(255, 215, 0, 0.3); } }
-
-        /* BLOOD MOON: Double-beat heartbeat */
-        body.theme-blood {
-            --bg-main: radial-gradient(circle at 50% -20%, #4a0000 0%, #000000 70%);
-            --bg-surface: rgba(15, 0, 0, 0.9); --text-main: #ffaaaa; --accent-primary: #ff0000; --accent-secondary: #880000;
-            --radius-card: 0px; --radius-btn: 0px; --border-card: 1px solid #ff0000; --shadow-card: 0 15px 40px rgba(255,0,0,0.3);
-            animation: none;
-        }
-        body.theme-blood .slot { animation: bloodHeartbeat 1.5s infinite; transform-origin: center; }
-        @keyframes bloodHeartbeat { 0%, 100% { transform: scale(1); border-color: #ff0000; } 15% { transform: scale(1.02); border-color: #ff5555; box-shadow: 0 0 30px rgba(255,0,0,0.6); } 30% { transform: scale(1); border-color: #ff0000; } 45% { transform: scale(1.02); border-color: #ff5555; box-shadow: 0 0 30px rgba(255,0,0,0.6); } }
-
-        /* DEEP SPACE: Endless cosmic drift */
-        body.theme-space {
-            --bg-main: radial-gradient(circle at 20% 80%, #2b00ff 0%, transparent 40%), radial-gradient(circle at 80% 20%, #aa00ff 0%, #00001a 60%);
-            --bg-surface: rgba(10, 10, 30, 0.6); --text-main: #e6e6ff; --accent-primary: #bb88ff; --accent-secondary: #4400ff;
-            --radius-card: 24px; --radius-btn: 12px; --border-card: 1px solid rgba(255,255,255,0.1); --shadow-card: 0 0 40px rgba(170,0,255,0.2);
-            background-size: 200% 200%;
-            animation: spaceDrift 12s linear infinite alternate;
-        }
-        @keyframes spaceDrift { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
-
-        /* ==========================================
-           4. ENDGAME THEMES WITH INTENSE ANIMATIONS
-           ========================================== */
-
-        /* CORRUPTED CORE: Aggressive screen tear & skew */
-        body.theme-glitch {
-            --bg-main: linear-gradient(45deg, #15001a 25%, #050010 75%);
-            --bg-surface: rgba(30, 0, 40, 0.75); --text-main: #e0b0ff; --accent-primary: #bd00ff; --accent-secondary: #00ff66;
-            --border-card: 2px dashed #bd00ff; --shadow-card: 0 0 30px rgba(189,0,255,0.3);
-            animation: none;
-        }
-        body.theme-glitch .app-title { animation: glitchText 0.3s infinite; }
-        @keyframes glitchText { 0% { transform: translate(0); text-shadow: 3px -3px 0px var(--accent-secondary); } 20% { transform: translate(-2px, 2px) skew(-5deg); text-shadow: -3px 3px 0px var(--accent-secondary); } 40% { transform: translate(2px, -2px) skew(5deg); text-shadow: 3px -3px 0px var(--accent-secondary); } 60% { transform: translate(-2px, -2px); text-shadow: -3px -3px 0px var(--accent-secondary); } 80% { transform: translate(2px, 2px); text-shadow: 3px 3px 0px var(--accent-secondary); } 100% { transform: translate(0); text-shadow: 3px -3px 0px var(--accent-secondary); } }
-
-        /* ARCADE LEGEND: Classic flashing insert coin text */
-        body.theme-legend {
-            --bg-main: #2b1810;
-            --bg-surface: #111111; --text-main: #ffea00; --accent-primary: #ffea00; --accent-secondary: #ff00ff;
-            --font-main: 'VT323', monospace; --radius-card: 4px; --radius-btn: 4px;
-            --border-card: 4px solid #ff00ff; --shadow-card: 0 0 20px #ff00ff;
-            animation: none;
-        }
-        body.theme-legend .slot { background: #000; border-top: 8px solid #ffea00; }
-        body.theme-legend .app-title { color: #ffea00; text-shadow: 4px 4px 0px #ff00ff; animation: arcadeBlink 1s step-end infinite; }
-        @keyframes arcadeBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        /* ABSOLUTE ZERO: Flowing iridescent liquid glass */
-        body.theme-god {
-            --bg-main: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #000000 100%);
-            --bg-surface: rgba(255, 255, 255, 0.05); --text-main: #f1f5f9; --accent-primary: #38bdf8; --accent-secondary: #e2e8f0;
-            --radius-card: 30px; --radius-btn: 15px; --border-card: 1px solid rgba(255,255,255,0.2);
-            --shadow-card: 0 0 50px rgba(56,189,248,0.25); backdrop-filter: blur(25px);
-            background-size: 300% 300%;
-            animation: godShimmer 8s ease infinite;
-        }
-        body.theme-god .app-title { background: linear-gradient(to right, #fff, #38bdf8, #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 12px; font-weight: 900; filter: drop-shadow(0 0 20px rgba(56,189,248,0.5)); animation: godTextShine 3s linear infinite; }
-        @keyframes godShimmer { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes godTextShine { to { background-position: 200% center; } }
-        body.theme-god .slot:hover { border-color: #38bdf8; }
-        body.theme-god .btn-play { background: rgba(56,189,248,0.1); border-color: #38bdf8; }
-
-        /* ==========================================
-           THEME VAULT SYSTEM
-           ========================================== */
-        #theme-btn {
-            position: fixed; top: 20px; right: 20px; z-index: 99990;
-            background: var(--bg-surface); border: 2px solid var(--accent-primary); color: var(--accent-primary);
-            padding: 10px 20px; font-weight: 900; font-family: var(--font-main); border-radius: var(--radius-btn);
-            cursor: inherit; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px;
-        }
-        #theme-btn:hover { background: var(--accent-primary); color: #000; box-shadow: 0 0 20px var(--accent-primary); transform: scale(1.05); }
-        body.in-game #theme-btn { display: none; }
-
-        #theme-vault-modal {
-            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-            z-index: 100000; backdrop-filter: blur(15px); flex-direction: column; align-items: center; justify-content: center;
-        }
-        .vault-content {
-            background: var(--bg-surface); border: 2px solid var(--accent-secondary); width: 90%; max-width: 650px;
-            border-radius: var(--radius-card); padding: 40px; box-shadow: 0 0 50px rgba(0,0,0,0.8);
-            max-height: 85vh; overflow-y: auto;
-        }
-        .vault-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; }
-        .vault-title { font-size: 2rem; font-weight: 900; margin: 0; color: var(--accent-primary); }
-        .close-vault { background: transparent; border: none; color: #fff; font-size: 2rem; cursor: pointer; }
+        /* CLOUD LEADERBOARD UI */
+        .stats-grid { display: grid; grid-template-columns: 1.11fr 0.89fr; gap: 25px; }
+        .stats-panel { background: rgba(6, 6, 12, 0.7); padding: 22px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; min-height: 380px; box-sizing: border-box; }
+        .stats-panel h3 { margin: 0 0 20px 0; font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; font-weight: 900; }
        
-        .playtime-tracker { background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 30px; border: 1px solid var(--accent-secondary); }
+        .leaderboard-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; margin-bottom: 8px; border-radius: 8px; font-family: monospace; font-size: 1.05rem; background: rgba(255,255,255,0.02); border-left: 3px solid rgba(255,255,255,0.2); }
+        .leaderboard-row.rank-1 { color: #ffd700; font-weight: bold; background: rgba(255,215,0,0.08); border-left-color: #ffd700; box-shadow: inset 0 0 10px rgba(255,215,0,0.05); }
+        .leaderboard-row.rank-2 { color: #e5e5e5; font-weight: bold; background: rgba(255,255,255,0.05); border-left-color: #c0c0c0; }
+        .leaderboard-row.rank-3 { color: #ff9d5c; font-weight: bold; background: rgba(255,157,92,0.05); border-left-color: #ff9d5c; }
+
+        .save-score-box { margin-top: auto; padding-top: 15px; display: flex; flex-direction: column; gap: 12px; }
+        .save-score-box input { background: #000000; border: 2px solid rgba(255,255,255,0.15); color: #fff; padding: 14px; border-radius: var(--radius-btn); font-family: var(--font-main); font-size: 1rem; font-weight: bold; outline: none; text-align: center; transition: 0.2s; letter-spacing: 1px; }
+        .save-score-box input:focus { border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(0, 240, 255, 0.25); }
+        .save-score-box button { background: var(--accent-secondary); color: #fff; border: none; padding: 14px; font-weight: 900; border-radius: var(--radius-btn); cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3); }
+        .save-score-box button:hover { background: #fff; color: #000; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,255,255,0.4); }
+
+        /* Sleek Profile Lock Display Card */
+        .profile-lock-card { background: linear-gradient(135deg, rgba(0, 240, 255, 0.05) 0%, rgba(0,0,0,0.4) 100%); border: 1px dashed rgba(0, 240, 255, 0.4); border-radius: 8px; padding: 15px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05); margin-top: auto; }
+        .profile-lock-status { font-size: 0.75rem; font-weight: 900; color: var(--accent-primary); letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; }
+        .profile-lock-name { font-size: 1.5rem; font-weight: 900; color: #fff; font-family: monospace; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+
+        .game-stat-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: rgba(255,255,255,0.02); margin-bottom: 8px; border-radius: 8px; border-right: 3px solid rgba(255,255,255,0.1); }
+        .game-stat-title { font-weight: 700; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; font-size: 0.95rem; }
+        .game-stat-time { color: var(--accent-secondary); font-family: monospace; font-weight: bold; font-size: 1rem; }
+
+        .playtime-tracker { background: rgba(0,0,0,0.7); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; border: 1px solid var(--accent-secondary); box-shadow: 0 0 20px rgba(255,0,85,0.15); }
         .playtime-tracker h3 { margin: 0 0 5px 0; color: #8892b0; font-size: 0.9rem; letter-spacing: 1px; }
-        .playtime-tracker .time { font-size: 2.3rem; font-weight: 900; color: #fff; font-family: monospace; }
+        .playtime-tracker .time { font-size: 2.6rem; font-weight: 900; color: #fff; font-family: monospace; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-        .theme-option {
-            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px; margin-bottom: 15px; transition: 0.2s;
-        }
-        .theme-option.unlocked:hover { background: rgba(255,255,255,0.07); border-color: var(--accent-primary); }
-        .theme-info h4 { margin: 0 0 5px 0; font-size: 1.2rem; }
-        .theme-info p { margin: 0; font-size: 0.85rem; color: #8892b0; }
-       
-        .theme-action-btn { padding: 8px 15px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; font-family: var(--font-main); }
-        .btn-equip { background: var(--accent-primary); color: #000; }
+        .theme-option { display: flex; justify-content: space-between; align-items: center; padding: 18px 22px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; margin-bottom: 15px; transition: 0.2s; }
+        .theme-action-btn { padding: 10px 20px; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; font-family: var(--font-main); text-transform: uppercase; letter-spacing: 1px; }
+        .btn-equip { background: var(--accent-primary); color: #000; font-weight: 800; }
         .btn-equipped { background: transparent; border: 2px solid var(--accent-primary); color: var(--accent-primary); cursor: default; }
-        .theme-locked { opacity: 0.4; border-color: rgba(255, 0, 85, 0.2) !important; }
-        .locked-timer { color: #ff4444; font-family: monospace; font-weight: bold; font-size: 1rem; text-align: right; }
 
-        /* CORE WEB LAYOUT STYLING */
+        /* === 5. CORE WEB GRID LAYOUT === */
         #landing-screen { position: fixed; inset: 0; background: var(--bg-main); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .landing-content { text-align: center; opacity: 0; transform: translateY(30px); animation: fadeUp 0.8s forwards; }
-        .enter-btn { padding: 18px 55px; font-size: 1.3rem; font-weight: 900; letter-spacing: 3px; color: var(--text-main); background: var(--bg-surface); border: 3px solid var(--accent-primary); border-radius: var(--radius-btn); cursor: inherit; transition: 0.2s; text-transform: uppercase; }
-        .enter-btn:hover { background: var(--accent-primary); color: #000; transform: scale(1.05); }
+        .landing-content { text-align: center; opacity: 0; transform: translateY(30px); animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .enter-btn { padding: 20px 65px; font-size: 1.4rem; font-weight: 900; letter-spacing: 4px; color: var(--text-main); background: var(--bg-surface); border: 3px solid var(--accent-primary); border-radius: var(--radius-btn); cursor: inherit; transition: 0.3s; text-transform: uppercase; box-shadow: 0 0 25px rgba(0, 240, 255, 0.3); }
+        .enter-btn:hover { background: var(--accent-primary); color: #000; transform: scale(1.06); box-shadow: 0 0 45px var(--accent-primary); }
 
         #crt-flash { position: fixed; inset: 0; background: #fff; z-index: 100000; pointer-events: none; transform: scaleY(0.005) scaleX(0); opacity: 0; }
-        .crt-animate { animation: crtPowerOn 0.9s forwards; }
+        .crt-animate { animation: crtPowerOn 0.8s cubic-bezier(0.19, 1, 0.22, 1) forwards; }
 
-        #arcade-container { padding: 50px 20px; max-width: 1400px; margin: 0 auto; display: none; opacity: 0; }
-        .app-title { text-align: center; font-size: 4.5rem; font-weight: 900; letter-spacing: 5px; margin-bottom: 60px; text-transform: uppercase; }
+        #arcade-container { padding: 60px 20px; max-width: 1450px; margin: 0 auto; display: none; opacity: 0; }
+        .app-title { text-align: center; font-size: 5rem; font-weight: 900; letter-spacing: 6px; margin-bottom: 60px; text-transform: uppercase; color: #fff; text-shadow: 0 0 10px var(--accent-primary), 0 0 20px var(--accent-secondary); }
 
-        .section-title { font-size: 2rem; font-weight: 900; margin-bottom: 35px; letter-spacing: 2px; display: flex; align-items: center; gap: 15px; }
-        .section-title::after { content: ''; flex: 1; height: 2px; background: linear-gradient(90deg, currentColor, transparent); }
-        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 40px; margin-bottom: 80px; }
+        .section-title { font-size: 2.2rem; font-weight: 900; margin-bottom: 35px; letter-spacing: 3px; display: flex; align-items: center; gap: 20px; text-shadow: 0 0 15px rgba(255,255,255,0.15); }
+        .section-title::after { content: ''; flex: 1; height: 3px; background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), transparent); opacity: 0.6; }
+        .game-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 45px; margin-bottom: 90px; }
        
-        .slot { background: var(--bg-surface); border-radius: var(--radius-card); overflow: hidden; border: var(--border-card); backdrop-filter: blur(12px); transition: transform 0.3s, box-shadow 0.3s; opacity: 0; transform: translateY(20px); position: relative; }
-        .slot:hover { transform: translateY(-10px) scale(1.03) !important; box-shadow: var(--shadow-card); }
-        .thumbnail-area { height: 190px; background: #06060a; background-size: cover; background-position: center; position: relative; cursor: inherit; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .slot:hover .thumbnail-area { background-size: 112%; transition: 0.3s; }
+        /* STANDARDIZED BASE CARDS */
+        .slot { background: linear-gradient(145deg, rgba(20, 20, 35, 0.95), rgba(10, 10, 18, 0.95)); border-radius: var(--radius-card); border: var(--border-card); backdrop-filter: blur(15px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.3s ease; position: relative; z-index: 1; box-shadow: 0 15px 35px rgba(0,0,0,0.5); cursor: pointer !important; }
+        .slot:hover:not(.tag-hot):not(.tag-new):not(.tag-update) { transform: translateY(-14px) scale(1.04) !important; border-color: var(--accent-primary); box-shadow: 0 25px 50px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 240, 255, 0.3); z-index: 10; }
+
+        /* UNIQUE TAG EXPLOSIONS */
+        @keyframes pulseHot { 0% { box-shadow: 0 0 15px #ff3300, inset 0 0 10px #ff3300; border-color: #ff3300; transform: scale(1); } 100% { box-shadow: 0 0 35px #ff8800, inset 0 0 20px #ff8800; border-color: #ff8800; transform: scale(1.02); } }
+        .slot.tag-hot { border: 3px solid #ff3300 !important; animation: pulseHot 0.4s infinite alternate !important; overflow: visible !important; }
+        @keyframes explodeHot { 0% { transform: scale(1); filter: brightness(1); } 10% { transform: scale(1.16) rotate(-3deg); filter: brightness(2); box-shadow: 0 0 120px #ffcc00, 0 0 60px #ff3300; } 100% { transform: scale(1.14); filter: brightness(1.3); box-shadow: 0 30px 65px #ff3300, 0 0 130px #ff8800; border-color: #ffffff !important; } }
+        .slot.tag-hot:hover { animation: explodeHot 0.5s cubic-bezier(.36,.07,.19,.97) forwards !important; z-index: 50 !important; }
+        @keyframes shockwaveHot { 0% { transform: scale(0.8); opacity: 1; box-shadow: 0 0 0 0px #ffcc00, 0 0 0 0px #ff3300; } 100% { transform: scale(1.8); opacity: 0; box-shadow: 0 0 0 70px rgba(255,204,0,0), 0 0 0 140px rgba(255,51,0,0); } }
+        .slot.tag-hot::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none !important; z-index: -1; opacity: 0; }
+        .slot.tag-hot:hover::after { animation: shockwaveHot 0.6s ease-out forwards; }
+
+        @keyframes pulseNew { 0% { box-shadow: 0 0 15px #00f0ff, inset 0 0 10px #00f0ff; border-color: #00f0ff; transform: scale(1); } 100% { box-shadow: 0 0 35px #ffffff, inset 0 0 20px #ffffff; border-color: #ffffff; transform: scale(1.02); } }
+        .slot.tag-new { border: 3px solid #00f0ff !important; animation: pulseNew 0.4s infinite alternate !important; overflow: visible !important; }
+        @keyframes explodeNew { 0% { transform: scale(1); filter: brightness(1); } 10% { transform: scale(1.16) rotate(3deg); filter: brightness(2.5); box-shadow: 0 0 120px #ffffff, 0 0 60px #00f0ff; } 100% { transform: scale(1.14); filter: brightness(1.3); box-shadow: 0 30px 65px #00aaff, 0 0 130px #00f0ff; border-color: #ffffff !important; } }
+        .slot.tag-new:hover { animation: explodeNew 0.5s cubic-bezier(.36,.07,.19,.97) forwards !important; z-index: 50 !important; }
+        @keyframes shockwaveNew { 0% { transform: scale(0.8); opacity: 1; box-shadow: 0 0 0 0px #ffffff, 0 0 0 0px #00f0ff; } 100% { transform: scale(1.8); opacity: 0; box-shadow: 0 0 0 70px rgba(255,255,255,0), 0 0 0 140px rgba(0,240,255,0); } }
+        .slot.tag-new::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none !important; z-index: -1; opacity: 0; }
+        .slot.tag-new:hover::after { animation: shockwaveNew 0.6s ease-out forwards; }
+
+        @keyframes pulseUpdate { 0% { box-shadow: 0 0 15px #bf00ff, inset 0 0 10px #bf00ff; border-color: #bf00ff; transform: scale(1); } 100% { box-shadow: 0 0 35px #ff00aa, inset 0 0 20px #ff00aa; border-color: #ff00aa; transform: scale(1.02); } }
+        .slot.tag-update { border: 3px solid #bf00ff !important; animation: pulseUpdate 0.4s infinite alternate !important; overflow: visible !important; }
+        @keyframes explodeUpdate { 0% { transform: scale(1); filter: brightness(1); } 10% { transform: scale(1.16) rotate(-2deg); filter: brightness(2); box-shadow: 0 0 120px #ff00ff, 0 0 60px #bf00ff; } 100% { transform: scale(1.14); filter: brightness(1.3); box-shadow: 0 30px 65px #bf00ff, 0 0 130px #ff00aa; border-color: #ffffff !important; } }
+        .slot.tag-update:hover { animation: explodeUpdate 0.5s cubic-bezier(.36,.07,.19,.97) forwards !important; z-index: 50 !important; }
+        @keyframes shockwaveUpdate { 0% { transform: scale(0.8); opacity: 1; box-shadow: 0 0 0 0px #ff00ff, 0 0 0 0px #bf00ff; } 100% { transform: scale(1.8); opacity: 0; box-shadow: 0 0 0 70px rgba(255,0,255,0), 0 0 0 140px rgba(191,0,255,0); } }
+        .slot.tag-update::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none !important; z-index: -1; opacity: 0; }
+        .slot.tag-update:hover::after { animation: shockwaveUpdate 0.6s ease-out forwards; }
+
+        @keyframes strobeBadgeAll { 0% { background: #fff; color: #000; transform: scale(1); } 50% { background: var(--accent-primary); color: #000; transform: scale(1.25) rotate(5deg); box-shadow: 0 0 25px #ffffff; } 100% { background: var(--accent-secondary); color: #fff; transform: scale(1); } }
+        .slot.tag-hot:hover .badge, .slot.tag-new:hover .badge, .slot.tag-update:hover .badge { animation: strobeBadgeAll 0.2s infinite !important; border: 3px solid #fff !important; }
        
-        /* THE BADGE SYSTEM */
-        .badge { position: absolute; top: 15px; right: 15px; padding: 8px 16px; border-radius: 6px; font-size: 0.85rem; font-weight: 900; z-index: 4; text-transform: uppercase; background: #333; color: #fff; border: 2px solid #fff; }
-        .slot-controls { padding: 25px 20px; display: flex; flex-direction: column; gap: 15px; }
-        .game-title { margin: 0; font-size: 1.35rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .btn-play { padding: 13px; border-radius: var(--radius-btn); cursor: inherit; font-weight: 700; letter-spacing: 1px; width: 100%; transition: 0.2s; text-transform: uppercase; background: transparent; border: 1px solid var(--text-main); color: var(--text-main); }
-        .slot:hover .btn-play { background: var(--text-main); color: var(--bg-surface); border-color: var(--text-main); }
+        .thumbnail-area { height: 200px; background: #040407; background-size: cover; background-position: center; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; border-radius: calc(var(--radius-card) - 2px) calc(var(--radius-card) - 2px) 0 0; pointer-events: none !important; }
+        .thumbnail-area::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(12, 12, 20, 1) 0%, transparent 40%); z-index: 2; }
+        .slot:hover .thumbnail-area { background-size: 112%; transition: background-size 0.4s ease; }
+       
+        .badge { position: absolute; top: 15px; right: 15px; padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 900; z-index: 20; text-transform: uppercase; background: #222; color: #fff; border: 2px solid #fff; pointer-events: none !important; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .slot-controls { padding: 25px 22px; display: flex; flex-direction: column; gap: 18px; position: relative; pointer-events: none !important; z-index: 3; }
+        .game-title { margin: 0; font-size: 1.4rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.5px; transition: color 0.3s ease; }
+        .slot:hover .game-title { color: var(--accent-primary); text-shadow: 0 0 10px var(--accent-primary); }
+        .btn-play { padding: 14px; border-radius: var(--radius-btn); font-weight: 800; letter-spacing: 2px; width: 100%; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); text-transform: uppercase; background: rgba(255,255,255,0.03); border: 2px solid rgba(255, 255, 255, 0.15); color: #fff; position: relative; pointer-events: none !important; }
+        .slot:hover .btn-play { background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary)); color: #000; font-weight: 900; border-color: transparent; box-shadow: 0 0 20px var(--accent-primary); transform: scale(1.02); }
 
         #fullscreen-overlay { display: none; position: fixed; inset: 0; background: var(--bg-surface); z-index: 100000; flex-direction: column; }
-        #game-header { height: 60px; display: flex; align-items: center; padding: 0 25px; border-bottom: 2px solid var(--accent-primary); justify-content: space-between; }
-        #back-btn { background: transparent; color: var(--text-main); border: 2px solid var(--accent-primary); padding: 8px 22px; font-weight: 700; cursor: inherit; border-radius: var(--radius-btn); }
-        #playing-title { font-weight: 700; letter-spacing: 1px; color: var(--text-main); }
-        #game-frame { width: 100%; height: calc(100vh - 60px); border: none; }
+        #game-header { height: 60px; display: flex; align-items: center; padding: 0 25px; border-bottom: 2px solid var(--accent-primary); justify-content: space-between; background: #06060c; }
+        #back-btn { background: transparent; color: var(--text-main); border: 2px solid var(--accent-primary); padding: 8px 24px; font-weight: 700; cursor: pointer; border-radius: var(--radius-btn); transition: 0.2s; font-family: var(--font-main); letter-spacing: 1px; }
+        #back-btn:hover { background: var(--accent-primary); color: #000; box-shadow: 0 0 15px var(--accent-primary); }
+        #playing-title { font-weight: 900; letter-spacing: 1.5px; color: #fff; text-shadow: 0 0 10px var(--accent-primary); }
+        #game-frame { width: 100%; height: calc(100vh - 60px); border: none; background: #000; }
 
-        @keyframes crtPowerOn { 0% { transform: scaleY(0.002) scaleX(0); opacity: 1; } 35% { transform: scaleY(0.002) scaleX(1); opacity: 1; } 65% { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(2); } 100% { transform: scaleY(1) scaleX(1); opacity: 0; filter: brightness(1); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes crtPowerOn { 0% { transform: scaleY(0.003) scaleX(0); opacity: 1; filter: brightness(3); } 40% { transform: scaleY(0.003) scaleX(1); opacity: 1; filter: brightness(3); } 70% { transform: scaleY(1) scaleX(1); opacity: 1; filter: brightness(2); } 100% { transform: scaleY(1) scaleX(1); opacity: 0; filter: brightness(1); } }
+        @keyframes fadeUp { 0% { opacity: 0; transform: translateY(30px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
     </style>
 </head>
 <body>
 
     <div id="ambient-scanlines"></div>
 
-    <button id="theme-btn" onclick="openVault()">[ THEME VAULT ]</button>
+    <div class="nav-btn-container">
+        <button class="sys-btn btn-stats" onclick="openStats()">[ CLOUD RANKS ]</button>
+        <button class="sys-btn" onclick="openVault()">[ THEME VAULT ]</button>
+    </div>
 
-    <div id="theme-vault-modal">
-        <div class="vault-content">
-            <div class="vault-header">
-                <h2 class="vault-title">THEME VAULT</h2>
-                <button class="close-vault" onclick="closeVault()">×</button>
+    <div id="theme-vault-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: var(--accent-primary); text-shadow: 0 0 15px var(--accent-primary);">THEME VAULT</h2>
+                <button class="close-modal" onclick="closeVault()">×</button>
             </div>
-           
             <div class="playtime-tracker">
                 <h3>TOTAL ARCADE PLAYTIME</h3>
                 <div class="time" id="vault-time-display">00:00:00</div>
             </div>
-
             <div id="theme-list-container"></div>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" style="color: var(--accent-primary); text-shadow: 0 0 15px var(--accent-primary);">GLOBAL CLOUD LEADERBOARD</h2>
+                <button class="close-modal" onclick="closeStats()">×</button>
+            </div>
+           
+            <div class="stats-grid">
+                <div class="stats-panel">
+                    <h3 style="color: var(--accent-primary);">TOP GLOBAL GRINDERS</h3>
+                    <div id="cloud-leaderboard-container" style="flex: 1; margin-bottom: 15px;">
+                        <div style="text-align:center; color:#8892b0; margin-top: 20px;">AWAITING DATABASE CONNECTION...</div>
+                    </div>
+                   
+                    <div id="identity-management-area">
+                        <div class="save-score-box" id="registration-form-box">
+                            <input type="text" id="player-name-input" placeholder="Enter your name..." maxlength="12">
+                            <button id="sync-score-btn" onclick="saveScoreToCloud()">SYNC SCORE</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-panel">
+                    <h3 style="color: var(--accent-secondary);">YOUR PLAYTIME (PER GAME)</h3>
+                    <div id="personal-stats-container"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="landing-screen">
         <div class="landing-content">
-            <h1 class="app-title" style="margin-bottom: 20px;">ScriptCade</h1>
+            <h1 class="app-title" style="margin-bottom: 25px;">ScriptCade</h1>
             <button id="enter-btn" class="enter-btn" onclick="enterArcade()">BOOT.EXE</button>
         </div>
     </div>
@@ -281,23 +250,92 @@
     </div>
 
     <script>
-        // --- 0. PLAYTIME & EXPANDED THEME VAULT ---
-        let totalPlaytimeSeconds = parseInt(localStorage.getItem('scriptcade-playtime')) || 0;
-        let playtimeInterval = null;
-        let activeTheme = localStorage.getItem('scriptcade-theme') || 'default';
+        // ---------------------------------------------------------
+        // 🌐 GLOBAL DATABASE CONFIGURATION (FIREBASE - US RE-ROUTE)
+        // ---------------------------------------------------------
+        const firebaseConfig = {
+            apiKey: "AIzaSyClyY2JE-9eABPonkvqB5dUY9EVOUSPJdk",
+            authDomain: "scriptcade-8eb75.firebaseapp.com",
+            databaseURL: "https://scriptcade-8eb75-default-rtdb.firebaseio.com/",
+            projectId: "scriptcade-8eb75",
+            storageBucket: "scriptcade-8eb75.firebasestorage.app",
+            messagingSenderId: "933519370644",
+            appId: "1:933519370644:web:d60dd671b3c23bbf644781"
+        };
+
+        // --- SANDBOX COMPATIBLE STORAGE BACKUPS ---
+        let totalPlaytimeSeconds = 0;
+        let gamePlaytimes = {};
+        let activeTheme = 'default';
+        let userHasRegistered = false;
+
+        function checkStorageAccess(key, defaultValue, isJson = false) {
+            try {
+                const val = localStorage.getItem(key);
+                if (val !== null) {
+                    return isJson ? JSON.parse(val) : val;
+                }
+            } catch (e) {
+                console.warn("Storage restricted inside sandbox environment.");
+            }
+            return defaultValue;
+        }
+
+        function saveStorageValue(key, value, isJson = false) {
+            try {
+                localStorage.setItem(key, isJson ? JSON.stringify(value) : value);
+            } catch (e) {}
+        }
+
+        totalPlaytimeSeconds = parseInt(checkStorageAccess('scriptcade-playtime', 0)) || 0;
+        gamePlaytimes = checkStorageAccess('scriptcade-game-times', {}, true);
+        activeTheme = checkStorageAccess('scriptcade-theme', 'default');
+        userHasRegistered = checkStorageAccess('scriptcade-registered', 'false') === 'true';
+
+        let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            initGlobalLeaderboard();
+        } catch (e) {
+            console.error("Cloud Database initialization error.", e);
+        }
+
+        // --- GAME DATA MODELS ---
+        const hotGamesList = [
+            { title: "Blade Ball", img: "bladethumb.png", badgeText: "HOT", url: "https://scriptcade.github.io/blade-ball/" },
+            { title: "Geometry Dash Maker", img: "gdthumb.jpeg", badgeText: "HOT", url: "https://scriptcade.github.io/this-is-a-tesst-changing-later/" },
+            { title: "Grow A Garden", img: "GrowAGardenthumb.avif", badgeText: "UPDATE", url: "https://scriptcade.github.io/grow-a-garden-gemini/" },
+            { title: "Tater Tot Clicker", img: "GrowAGardenthumb.avif", badgeText: "NEW", url: "https://scriptcade.github.io/tatertot/" }
+        ];
+
+        const gamesList = [
+            { title: "Among Us Clone", img: "amongusthumb.webp", badgeText: "FIRST PUBLISHED", badgeColor: "#9900ff", url: "https://scriptcade.github.io/among-us-gemini/" },
+            { title: "Epic Plane Evolution", img: "epicplanethumb.jpeg", url: "https://scriptcade.github.io/epic-plane-evolution/" },
+            { title: "Block Blast", img: "blockthumb.jpeg", badgeText: "SAVES DATA", badgeColor: "#00cc66", url: "https://scriptcade.github.io/block-blast/" },
+            { title: "Tower Defense Simulator", img: "tdsthumb.jpeg", url: "https://scriptcade.github.io/tds/" },
+            { title: "Block Shooter", img: "BLOCK SHOOTER.png", badgeText: "NEW", url: "https://scriptcade.github.io/block-shooter/" },
+            { title: "Doodle Glider", img: "Doodleglider.jpeg", badgeText: "One Prompt", badgeColor: "#ff9900", url: "https://relthecreator.github.io/Doodle-Glider/" },
+            { title: "Battle Arena", img: "Doodleglider.jpeg", badgeText: "Made by Josh", badgeColor: "#1B5583", url: "https://relthecreator.github.io/Battle-Arena/" },
+            { title: "Battle Cars", img: "Doodleglider.jpeg", badgeText: "UNDER CONSTRUCTION made by oliver", badgeColor: "#A98307", url: "https://relthecreator.github.io/Battlecars/" },
+            { title: "Forest Forager", img: "forest.jpeg", badgeText: "Made by Robin", badgeColor: "#1B5583", url: "https://scriptcade.github.io/forestgame/" }
+        ];
 
         const themes = [
-            { id: 'default', name: 'Neon Cyber', desc: 'The classic ScriptCade experience.', req: 0 },
-            { id: 'theme-hacker', name: 'Terminal Hacker', desc: 'Pure code layout. No curves.', req: 0 },
-            { id: 'theme-retro', name: 'Retro Synthwave', desc: '80s arcade sunset aesthetic.', req: 0 },
-            { id: 'theme-vapor', name: 'Vaporwave OS', desc: 'Windows 95 interface styling.', req: 0 },
-            { id: 'theme-gold', name: 'Gold VIP', desc: 'Sleek black and gold configuration.', req: 60 },
-            { id: 'theme-blood', name: 'Blood Moon', desc: 'Dark, crimson nightmare fuel.', req: 300 },
-            { id: 'theme-space', name: 'Deep Space', desc: 'Cosmic galaxy background matrix.', req: 600 },
-            { id: 'theme-glitch', name: 'Corrupted Core', desc: '⚠️ GLITCH WORKSTATION UNLOCKED ⚠️', req: 3600 },
-            { id: 'theme-legend', name: 'Arcade Legend', desc: '🔥 TRUE RETRO CABINET ARCHITECTURE 🔥', req: 18000 },
-            { id: 'theme-god', name: 'Absolute Zero', desc: '👑 ULTIMATE 24-HOUR GOD MODE PLATINUM 👑', req: 86400 }
+            { id: 'default', name: 'Neon Cyber', desc: 'The classic high-glow experience.', req: 0 },
+            { id: 'theme-hacker', name: 'Terminal Hacker', desc: 'Pure green-matrix workspace.', req: 0 },
+            { id: 'theme-retro', name: 'Retro Synthwave', desc: '80s arcade sunset configuration.', req: 0 },
+            { id: 'theme-vapor', name: 'Vaporwave OS', desc: 'Vintage system desktop style.', req: 0 },
+            { id: 'theme-gold', name: 'Gold VIP', desc: 'Premium luxury configuration.', req: 60 },
+            { id: 'theme-blood', name: 'Blood Moon', desc: 'Crimson horror simulation style.', req: 300 },
+            { id: 'theme-space', name: 'Deep Space', desc: 'Cosmic alignment backdrop matrix.', req: 600 },
+            { id: 'theme-glitch', name: 'Corrupted Core', desc: '⚠️ GLITCH WORKSTATION ACTIVE ⚠️', req: 3600 },
+            { id: 'theme-legend', name: 'Arcade Legend', desc: '🔥 CHROME RETRO CABINET EMULATION 🔥', req: 18000 },
+            { id: 'theme-god', name: 'Absolute Zero', desc: '👑 ULTIMATE PLATINUM MODE UNLOCKED 👑', req: 86400 }
         ];
+
+        let playtimeInterval = null;
+        let currentGameActive = null;
 
         function formatTime(totalSecs) {
             const h = Math.floor(totalSecs / 3600).toString().padStart(2, '0');
@@ -306,24 +344,164 @@
             return `${h}:${m}:${s}`;
         }
 
+        // --- REAL CLOUD LEADERBOARD INTEGRATION ---
+        function initGlobalLeaderboard() {
+            if (!db) return;
+           
+            db.ref('leaderboard').on('value', (snapshot) => {
+                const data = snapshot.val();
+                const container = document.getElementById('cloud-leaderboard-container');
+                if (!container) return;
+                container.innerHTML = '';
+               
+                if (!data) {
+                    container.innerHTML = `<div style="text-align:center; color:#8892b0; margin-top: 20px;">Database connected. No global scores yet. Be the first!</div>`;
+                    return;
+                }
+
+                let globalLeaderboardData = [];
+                for (let key in data) {
+                    globalLeaderboardData.push(data[key]);
+                }
+               
+                globalLeaderboardData.sort((a, b) => b.time - a.time);
+
+                for (let i = 0; i < Math.min(6, globalLeaderboardData.length); i++) {
+                    const player = globalLeaderboardData[i];
+                    let rankClass = '';
+                    if (i === 0) rankClass = 'rank-1';
+                    else if (i === 1) rankClass = 'rank-2';
+                    else if (i === 2) rankClass = 'rank-3';
+
+                    container.innerHTML += `
+                        <div class="leaderboard-row ${rankClass}">
+                            <span>#${i + 1} ${player.name}</span>
+                            <span>${formatTime(player.time)}</span>
+                        </div>
+                    `;
+                }
+
+                updateSyncButtonState();
+            });
+        }
+
+        function updateSyncButtonState() {
+            const area = document.getElementById('identity-management-area');
+            if (userHasRegistered && area) {
+                const savedName = checkStorageAccess('scriptcade-saved-name', 'UNKNOWN');
+                area.innerHTML = `
+                    <div class="profile-lock-card">
+                        <div class="profile-lock-status">🔒 SYSTEM RECOGNIZED</div>
+                        <div class="profile-lock-name">${savedName}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function saveScoreToCloud() {
+            if (!db) {
+                alert("Database connection is missing. Please verify configuration endpoints.");
+                return;
+            }
+
+            if (userHasRegistered) {
+                alert("You have already synced a leaderboard slot profile!");
+                return;
+            }
+           
+            const nameInput = document.getElementById('player-name-input');
+            const playerName = nameInput.value.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+           
+            if (!playerName || playerName.length < 2) {
+                alert("Please type a valid name (at least 2 letters long).");
+                return;
+            }
+
+            if (totalPlaytimeSeconds === 0) {
+                alert("You need to log playground hours before syncing to cloud mainframes!");
+                return;
+            }
+
+            const btn = document.getElementById('sync-score-btn');
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.innerText = "VERIFYING NAME...";
+
+            db.ref('leaderboard/' + playerName).once('value').then((snapshot) => {
+                if (snapshot.exists()) {
+                    alert("This username is already claimed by another grinder! Pick a unique one.");
+                    btn.disabled = false;
+                    btn.style.opacity = "1";
+                    btn.innerText = "SYNC SCORE";
+                } else {
+                    db.ref('leaderboard/' + playerName).set({
+                        name: playerName,
+                        time: totalPlaytimeSeconds
+                    }).then(() => {
+                        userHasRegistered = true;
+                        saveStorageValue('scriptcade-registered', 'true');
+                        saveStorageValue('scriptcade-saved-name', playerName);
+                        updateSyncButtonState();
+                        alert("Profile permanently bound to cloud database grid!");
+                    }).catch((error) => {
+                        alert("Database transmission failed. Double check permission setups.");
+                        btn.disabled = false;
+                        btn.style.opacity = "1";
+                        btn.innerText = "SYNC SCORE";
+                    });
+                }
+            });
+        }
+
+        function openStats() {
+            document.getElementById('stats-modal').style.display = 'flex';
+            renderPersonalStats();
+            updateSyncButtonState();
+        }
+        function closeStats() { document.getElementById('stats-modal').style.display = 'none'; }
+
+        function renderPersonalStats() {
+            const container = document.getElementById('personal-stats-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            let gamesArr = Object.keys(gamePlaytimes).map(title => {
+                return { title: title, time: gamePlaytimes[title] };
+            });
+            gamesArr.sort((a, b) => b.time - a.time);
+
+            if (gamesArr.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#8892b0; margin-top: 40px;">No application instances registered yet.</div>`;
+                return;
+            }
+
+            gamesArr.forEach(game => {
+                container.innerHTML += `
+                    <div class="game-stat-row">
+                        <span class="game-stat-title" title="${game.title}">${game.title}</span>
+                        <span class="game-stat-time">${formatTime(game.time)}</span>
+                    </div>
+                `;
+            });
+        }
+
         function applyTheme(themeId) {
             document.body.className = document.body.className.replace(/\btheme-[^\s]+\b/g, '');
             if (themeId !== 'default') document.body.classList.add(themeId);
             activeTheme = themeId;
-            localStorage.setItem('scriptcade-theme', themeId);
+            saveStorageValue('scriptcade-theme', themeId);
             renderVault();
         }
 
-        function openVault() {
-            document.getElementById('theme-vault-modal').style.display = 'flex';
-            renderVault();
-        }
-
+        function openVault() { document.getElementById('theme-vault-modal').style.display = 'flex'; renderVault(); }
         function closeVault() { document.getElementById('theme-vault-modal').style.display = 'none'; }
 
         function renderVault() {
-            document.getElementById('vault-time-display').innerText = formatTime(totalPlaytimeSeconds);
+            const timeDisp = document.getElementById('vault-time-display');
+            if(timeDisp) timeDisp.innerText = formatTime(totalPlaytimeSeconds);
+           
             const container = document.getElementById('theme-list-container');
+            if(!container) return;
             container.innerHTML = '';
 
             themes.forEach(theme => {
@@ -333,7 +511,7 @@
                 let buttonHTML = '';
                 if (!isUnlocked) {
                     const diff = theme.req - totalPlaytimeSeconds;
-                    buttonHTML = `<div class="locked-timer">NEED ${formatTime(diff)}</div>`;
+                    buttonHTML = `<div class="locked-timer" style="color:var(--accent-secondary);font-family:monospace;font-weight:bold;">NEED ${formatTime(diff)}</div>`;
                 } else if (isEquipped) {
                     buttonHTML = `<button class="theme-action-btn btn-equipped">EQUIPPED</button>`;
                 } else {
@@ -343,8 +521,8 @@
                 container.innerHTML += `
                     <div class="theme-option ${isUnlocked ? 'unlocked' : 'theme-locked'}">
                         <div class="theme-info">
-                            <h4>${theme.name} ${!isUnlocked ? '🔒' : ''}</h4>
-                            <p>${theme.desc}</p>
+                            <h4 style="margin:0 0 5px 0; font-size:1.2rem;">${theme.name} ${!isUnlocked ? '🔒' : ''}</h4>
+                            <p style="margin:0; font-size:0.85rem; color:#8892b0;">${theme.desc}</p>
                         </div>
                         ${buttonHTML}
                     </div>
@@ -354,9 +532,8 @@
 
         window.onload = () => { applyTheme(activeTheme); };
 
-        // --- 1. SYSTEM INITIALIZATION ---
         function enterArcade() {
-            document.getElementById('enter-btn').innerText = "EXECUTING...";
+            document.getElementById('enter-btn').innerText = "EXECUTING SYSTEM...";
             setTimeout(() => {
                 const flash = document.createElement('div');
                 flash.id = 'crt-flash';
@@ -369,36 +546,48 @@
                     arcade.style.opacity = '1';
                     loadHotGames();
                     loadGames();
-                }, 450);
-                setTimeout(() => { flash.remove(); }, 1200);
-            }, 300);
+                }, 400);
+                setTimeout(() => { flash.remove(); }, 1100);
+            }, 200);
         }
 
         function renderGrid(list, elementId, type) {
             const grid = document.getElementById(elementId);
+            if (!grid) return;
             grid.innerHTML = '';
+           
             list.forEach((game, index) => {
                 const slot = document.createElement('div');
-                let badgeHTML = '';
+                slot.className = `slot`;
                
-                if (game.badgeText) {
-                    let customColorStyle = game.badgeColor
-                        ? `style="background-color: ${game.badgeColor} !important; border-color: ${game.badgeColor} !important; box-shadow: 0 0 15px ${game.badgeColor}; color: #fff !important;"`
-                        : '';
-                    badgeHTML = `<span class="badge" ${customColorStyle}>${game.badgeText}</span>`;
+                let badgeHTML = '';
+                let badgeTextSafe = (game.badgeText || "").toString();
+               
+                if (badgeTextSafe) {
+                    let customColorStyle = game.badgeColor ? `style="background-color: ${game.badgeColor} !important; border-color: ${game.badgeColor} !important; box-shadow: 0 0 15px ${game.badgeColor} !important; color: #fff !important;"` : '';
+                    badgeHTML = `<span class="badge" ${customColorStyle}>${badgeTextSafe}</span>`;
+                   
+                    let txtUpper = badgeTextSafe.toUpperCase();
+                    if (txtUpper.includes('HOT')) slot.classList.add('tag-hot');
+                    else if (txtUpper.includes('NEW')) slot.classList.add('tag-new');
+                    else if (txtUpper.includes('UPDATE')) slot.classList.add('tag-update');
                 }
                
-                slot.className = `slot`;
-                slot.style.animation = `fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.06}s forwards`;
+                slot.onclick = function() { playGame(type, index); };
+                slot.style.animation = `fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) ${index * 0.05}s forwards`;
                
+                let imgSafe = (game.img && game.img !== 'image') ? game.img : '';
+                let nullImgHTML = !imgSafe ? '<span style="font-size:2.5rem;font-weight:900;color:rgba(255,255,255,0.15);">MISSING_ART</span>' : '';
+                let titleSafe = game.title || 'UNNAMED_APPLICATION';
+
                 slot.innerHTML = `
-                    <div class="thumbnail-area" onclick="playGame('${type}', ${index})" style="background-image: url('${game.img}')">
-                        ${!game.img || game.img === 'image' ? '<span style="font-size:3rem;font-weight:700;color:rgba(255,255,255,0.2);">IMG_NULL</span>' : ''}
+                    <div class="thumbnail-area" style="background-image: url('${imgSafe}')">
+                        ${nullImgHTML}
                         ${badgeHTML}
                     </div>
                     <div class="slot-controls">
-                        <h3 class="game-title" title="${game.title}">${game.title}</h3>
-                        <button class="btn-play" onclick="playGame('${type}', ${index})">LAUNCH</button>
+                        <h3 class="game-title" title="${titleSafe}">${titleSafe}</h3>
+                        <button class="btn-play">LAUNCH APPLICATION</button>
                     </div>
                 `;
                 grid.appendChild(slot);
@@ -413,20 +602,33 @@
             if (!data) return;
            
             document.body.classList.add('in-game');
-            document.getElementById('playing-title').innerText = "CONNECTED: " + data.title.toUpperCase();
+            currentGameActive = data.title || "UNKNOWN GAME";
+            document.getElementById('playing-title').innerText = "CONNECTED // " + currentGameActive.toUpperCase();
            
             const overlay = document.getElementById('fullscreen-overlay');
             const frame = document.getElementById('game-frame');
             overlay.style.display = 'flex';
-            frame.src = data.url;
+            frame.src = data.url || "";
             if (document.documentElement.requestFullscreen) { document.documentElement.requestFullscreen().catch((e) => {}); }
 
             playtimeInterval = setInterval(() => {
                 totalPlaytimeSeconds++;
-                localStorage.setItem('scriptcade-playtime', totalPlaytimeSeconds);
-                if(document.getElementById('theme-vault-modal').style.display === 'flex') {
-                    renderVault();
+               
+                if (!gamePlaytimes[currentGameActive]) gamePlaytimes[currentGameActive] = 0;
+                gamePlaytimes[currentGameActive]++;
+
+                saveStorageValue('scriptcade-playtime', totalPlaytimeSeconds);
+                saveStorageValue('scriptcade-game-times', gamePlaytimes, true);
+
+                if (userHasRegistered && db) {
+                    const savedName = checkStorageAccess('scriptcade-saved-name', '');
+                    if (savedName) {
+                        db.ref('leaderboard/' + savedName).update({ time: totalPlaytimeSeconds });
+                    }
                 }
+
+                if(document.getElementById('theme-vault-modal').style.display === 'flex') { renderVault(); }
+                if(document.getElementById('stats-modal').style.display === 'flex') { renderPersonalStats(); }
             }, 1000);
         }
 
@@ -434,91 +636,10 @@
             document.body.classList.remove('in-game');
             document.getElementById('fullscreen-overlay').style.display = 'none';
             document.getElementById('game-frame').src = '';
+            currentGameActive = null;
             if (document.exitFullscreen) { document.exitFullscreen().catch((e) => {}); }
             clearInterval(playtimeInterval);
         }
-
-        // --- 2. GAME ARRAYS (PERFECTLY LINED UP) ---
-        const hotGamesList = [
-            {
-                title: "Blade Ball",
-                img: "bladethumb.png",
-                badgeText: "HOT",
-                url: "https://scriptcade.github.io/blade-ball/"
-            },
-            {
-                title: "Geometry Dash Maker",
-                img: "gdthumb.jpeg",
-                badgeText: "HOT",
-                url: "https://scriptcade.github.io/this-is-a-tesst-changing-later/"
-            },
-            {
-                title: "Grow A Garden",
-                img: "GrowAGardenthumb.avif",
-                badgeText: "HOT",
-                url: "https://scriptcade.github.io/grow-a-garden-gemini/"
-            },
-            {
-                title: "Tater Tot Clicker",
-                img: "GrowAGardenthumb.avif",
-                badgeText: "New",
-                url: "https://scriptcade.github.io/tatertot/"
-            }
-        ];
-
-        const gamesList = [
-            {
-                title: "Among Us Clone",
-                img: "amongusthumb.webp",
-                badgeText: "FIRST PUBLISHED",
-                badgeColor: "#9900ff",
-                url: "https://scriptcade.github.io/among-us-gemini/"
-            },
-            {
-                title: "Forest Forager",
-                img: "forest.jpeg",
-                badgeText: "Made by Robin",
-                badgeColor: "#1B5583",
-                url: "https://scriptcade.github.io/forestgame/"
-            },
-            {
-                title: "Epic Plane Evolution",
-                img: "epicplanethumb.jpeg",
-                url: "https://scriptcade.github.io/epic-plane-evolution/"
-            },
-            {
-                title: "Block Blast",
-                img: "blockthumb.jpeg",
-                badgeText: "SAVES DATA",
-                badgeColor: "#00cc66",
-                url: "https://scriptcade.github.io/block-blast/"
-            },
-            {
-                title: "Tower Defense Simulator",
-                img: "tdsthumb.jpeg",
-                url: "https://scriptcade.github.io/tds/"
-            },
-            {
-                title: "Block Shooter",
-                img: "BLOCK SHOOTER.png",
-                badgeText: "NEW",
-                url: "https://scriptcade.github.io/block-shooter/"
-            },
-            {
-                title: "Doodle Glider",
-                img: "Doodleglider.jpeg",
-                badgeText: "One Prompt",
-                badgeColor: "#ff9900",
-                url: "https://relthecreator.github.io/Doodle-Glider/"
-            },
-            {
-                title: "Battle Arena",
-                img: "Doodleglider.jpeg",
-                badgeText: "Made by Josh",
-                badgeColor: "#1B5583",
-                url: "https://relthecreator.github.io/Battle-Arena/"
-            }
-        ];
     </script>
 </body>
 </html>
